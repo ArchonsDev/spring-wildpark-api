@@ -24,8 +24,6 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String username;
-
     private String password;
 
     private String email;
@@ -58,14 +56,6 @@ public class User implements UserDetails {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -180,5 +170,109 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((password == null) ? 0 : password.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
+        result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
+        result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
+        result = prime * result + ((contactNumber == null) ? 0 : contactNumber.hashCode());
+        result = prime * result + ((street == null) ? 0 : street.hashCode());
+        result = prime * result + ((municipality == null) ? 0 : municipality.hashCode());
+        result = prime * result + ((province == null) ? 0 : province.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + zipCode;
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (password == null) {
+            if (other.password != null)
+                return false;
+        } else if (!password.equals(other.password))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        if (birthDate == null) {
+            if (other.birthDate != null)
+                return false;
+        } else if (!birthDate.equals(other.birthDate))
+            return false;
+        if (firstname == null) {
+            if (other.firstname != null)
+                return false;
+        } else if (!firstname.equals(other.firstname))
+            return false;
+        if (lastname == null) {
+            if (other.lastname != null)
+                return false;
+        } else if (!lastname.equals(other.lastname))
+            return false;
+        if (contactNumber == null) {
+            if (other.contactNumber != null)
+                return false;
+        } else if (!contactNumber.equals(other.contactNumber))
+            return false;
+        if (street == null) {
+            if (other.street != null)
+                return false;
+        } else if (!street.equals(other.street))
+            return false;
+        if (municipality == null) {
+            if (other.municipality != null)
+                return false;
+        } else if (!municipality.equals(other.municipality))
+            return false;
+        if (province == null) {
+            if (other.province != null)
+                return false;
+        } else if (!province.equals(other.province))
+            return false;
+        if (country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!country.equals(other.country))
+            return false;
+        if (zipCode != other.zipCode)
+            return false;
+        if (role != other.role)
+            return false;
+        return true;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 }
