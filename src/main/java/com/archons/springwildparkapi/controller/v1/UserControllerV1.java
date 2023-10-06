@@ -16,7 +16,7 @@ import com.archons.springwildparkapi.model.User;
 import com.archons.springwildparkapi.service.UserService;
 
 @RestController
-@RequestMapping("/v1/users")
+@RequestMapping("api/v1/users")
 public class UserControllerV1 {
     private final UserService userService;
 
