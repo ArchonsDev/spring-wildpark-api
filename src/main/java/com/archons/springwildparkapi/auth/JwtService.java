@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.service;
+package com.archons.springwildparkapi.auth;
 
 import java.security.Key;
 import java.util.Date;

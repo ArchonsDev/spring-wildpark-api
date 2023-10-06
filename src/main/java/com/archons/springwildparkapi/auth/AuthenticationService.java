@@ -8,7 +8,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.User;
 import com.archons.springwildparkapi.repository.UserRepository;
-import com.archons.springwildparkapi.service.JwtService;
 
 @Service
 public class AuthenticationService {
