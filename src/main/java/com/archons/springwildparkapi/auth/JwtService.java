@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.service;
+package com.archons.springwildparkapi.auth;
 
 import java.security.Key;
 import java.util.Date;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,11 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-    private static final String SECRET_KEY = ""; // TODO: Generate secret key
+    private final String SECRET_KEY;
+
+    public JwtService(@Value("${api.secret-key}") String SECRET_KEY) {
+        this.SECRET_KEY = SECRET_KEY;
+    }
 
     public String extractUsername(String token) {
         // Extracts the email from the token
