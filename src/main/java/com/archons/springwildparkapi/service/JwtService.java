@@ -20,6 +20,7 @@ public class JwtService {
     private static final String SECRET_KEY = ""; // TODO: Generate secret key
 
     public String extractUsername(String token) {
+        // Extracts the email from the token
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -46,9 +47,8 @@ public class JwtService {
     }
 
     public String generateToken(
-        Map<String, Object> extraClaims,
-        UserDetails userDetails
-    ) {
+            Map<String, Object> extraClaims,
+            UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
