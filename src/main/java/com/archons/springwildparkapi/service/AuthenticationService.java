@@ -1,10 +1,13 @@
-package com.archons.springwildparkapi.auth;
+package com.archons.springwildparkapi.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.archons.springwildparkapi.auth.AuthenticationRequest;
+import com.archons.springwildparkapi.auth.AuthenticationResponse;
+import com.archons.springwildparkapi.auth.RegisterRequest;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.User;
 import com.archons.springwildparkapi.repository.UserRepository;
