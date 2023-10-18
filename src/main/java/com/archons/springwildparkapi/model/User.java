@@ -21,7 +21,7 @@ import jakarta.persistence.Table;
 @Table(name = "tblusers")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String password;
@@ -29,13 +29,15 @@ public class User implements UserDetails {
     private String email;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date birthDate;
+    private Date birthdate;
 
     private String firstname;
 
     private String lastname;
 
     private String contactNumber;
+
+    private String gender;
 
     private String street;
 
@@ -52,6 +54,14 @@ public class User implements UserDetails {
 
     public Long getId() {
         return id;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public void setId(Long id) {
@@ -74,12 +84,12 @@ public class User implements UserDetails {
         this.email = email;
     }
 
-    public Date getBirthDate() {
-        return birthDate;
+    public Date getBirthdate() {
+        return birthdate;
     }
 
-    public void setBirthDate(Date birthDate) {
-        this.birthDate = birthDate;
+    public void setBirthdate(Date birthdate) {
+        this.birthdate = birthdate;
     }
 
     public String getFirstname() {
@@ -152,7 +162,6 @@ public class User implements UserDetails {
     }
 
     @Override
-
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -187,7 +196,7 @@ public class User implements UserDetails {
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((password == null) ? 0 : password.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
+        result = prime * result + ((birthdate == null) ? 0 : birthdate.hashCode());
         result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
         result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
         result = prime * result + ((contactNumber == null) ? 0 : contactNumber.hashCode());
@@ -224,10 +233,10 @@ public class User implements UserDetails {
                 return false;
         } else if (!email.equals(other.email))
             return false;
-        if (birthDate == null) {
-            if (other.birthDate != null)
+        if (birthdate == null) {
+            if (other.birthdate != null)
                 return false;
-        } else if (!birthDate.equals(other.birthDate))
+        } else if (!birthdate.equals(other.birthdate))
             return false;
         if (firstname == null) {
             if (other.firstname != null)
