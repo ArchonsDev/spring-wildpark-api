@@ -28,8 +28,10 @@ Fields: id, email, password, birthDate, firstname, lastname, contactNumber, gend
 
 ### Public End-Points
 These endpoints do not need to be authorized.
-- POST `/api/v1/auth` requires request body with `email` & `password`
-- POST `/api/v1/authenticate` requires request body with `email` & `password`.
+| Method | URI | Description |
+| ------ | --- | ----------- |
+| **POST** | `/api/v1/auth/register` | requires request body with `email` & `password` |
+| **POST** | `/api/v1/auth/authenticate` | requires request body with `email` & `password`. |
 
 ### Dependencies
 See `pom.xml` file for more details.
