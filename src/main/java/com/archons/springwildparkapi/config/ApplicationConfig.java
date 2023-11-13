@@ -11,19 +11,19 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.archons.springwildparkapi.repository.UserRepository;
+import com.archons.springwildparkapi.repository.AccountRepository;
 
 @Configuration
 public class ApplicationConfig {
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public ApplicationConfig(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public ApplicationConfig(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
     }
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return username -> accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
