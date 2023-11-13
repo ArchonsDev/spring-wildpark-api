@@ -1,5 +1,6 @@
 package com.archons.springwildparkapi.model;
 
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -7,6 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tblfourwheelvehicle")
+@DiscriminatorValue("four_wheel")
 public class FourWheelVehicleEntity extends VehicleEntity {
     @Enumerated(EnumType.STRING)
     private FourWheelVehicleType type;
