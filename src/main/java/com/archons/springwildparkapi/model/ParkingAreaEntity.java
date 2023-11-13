@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,13 +26,18 @@ public class ParkingAreaEntity {
     @JoinColumn(name = "parking_area_id")
     private List<VehicleEntity> parkedVehicles;
 
+    @OneToOne
+    @JoinColumn(name = "organization_id")
+    private OrganizationEntity organization;
+
     public ParkingAreaEntity() {
     }
 
-    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles) {
+    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles, OrganizationEntity organization) {
         this.id = id;
         this.slots = slots;
         this.parkedVehicles = parkedVehicles;
+        this.organization = organization;
     }
 
     public int getId() {
@@ -58,6 +64,14 @@ public class ParkingAreaEntity {
         this.parkedVehicles = parkedVehicles;
     }
 
+    public OrganizationEntity getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationEntity organization) {
+        this.organization = organization;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -65,6 +79,7 @@ public class ParkingAreaEntity {
         result = prime * result + id;
         result = prime * result + slots;
         result = prime * result + ((parkedVehicles == null) ? 0 : parkedVehicles.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         return result;
     }
 
@@ -86,7 +101,11 @@ public class ParkingAreaEntity {
                 return false;
         } else if (!parkedVehicles.equals(other.parkedVehicles))
             return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
+            return false;
         return true;
     }
-
 }

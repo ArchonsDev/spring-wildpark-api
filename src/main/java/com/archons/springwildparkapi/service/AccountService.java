@@ -1,5 +1,7 @@
 package com.archons.springwildparkapi.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +19,35 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public Iterable<AccountEntity> getAllUsers() {
-        return accountRepository.findAll();
+    public List<AccountEntity> getAllAccounts() {
+        Iterable<AccountEntity> iterable = accountRepository.findAll();
+        List<AccountEntity> userList = new ArrayList<>();
+        iterable.forEach(userList::add);
+        return userList;
     }
 
-    public Optional<AccountEntity> getUserById(int id) {
+    public Optional<AccountEntity> getAccountById(int id) {
         return accountRepository.findById(id);
     }
 
-    public boolean addUser(AccountEntity user) {
-        accountRepository.save(user);
-        return true;
+    public Optional<AccountEntity> updateAccount(AccountEntity updatedAccount) {
+        Optional<AccountEntity> existingAccount = accountRepository.findById(updatedAccount.getId());
+
+        if (existingAccount.isPresent()) {
+            return Optional.of(accountRepository.save(updatedAccount));
+        }
+
+        return Optional.ofNullable(null);
     }
 
+    public boolean deleteAccount(int accountId) {
+        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+
+        if (existingAccount.isPresent()) {
+            accountRepository.delete(existingAccount.get());
+            return true;
+        }
+
+        return false;
+    }
 }

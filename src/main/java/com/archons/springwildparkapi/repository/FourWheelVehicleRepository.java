@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.archons.springwildparkapi.model.FourWheelVehicleEntity;
 
 @Repository
-public interface FourWheelVehicleEntityRepository extends CrudRepository<FourWheelVehicleEntity, Integer> {
+public interface FourWheelVehicleRepository extends CrudRepository<FourWheelVehicleEntity, Integer> {
 
 }
