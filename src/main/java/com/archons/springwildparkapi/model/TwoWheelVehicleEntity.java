@@ -1,11 +1,13 @@
 package com.archons.springwildparkapi.model;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tbltwowheelvehicle")
+@DiscriminatorValue("two_wheel")
 public class TwoWheelVehicleEntity extends VehicleEntity {
     @Column(name = "displacement")
     private float displacement;

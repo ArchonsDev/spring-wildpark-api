@@ -1,5 +1,7 @@
 package com.archons.springwildparkapi.model;
 
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,6 +9,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -31,17 +36,22 @@ public class OrganizationEntity {
     @Enumerated(EnumType.STRING)
     private OrganizationType type;
 
+    @ManyToMany
+    @JoinTable(name = "tblorganizationadmin", joinColumns = @JoinColumn(name = "organization_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
+    private List<AccountEntity> admins;
+
     public OrganizationEntity() {
     }
 
     public OrganizationEntity(int id, String name, float latitude, float longitude, PaymentStrategy paymentStrategy,
-            OrganizationType type) {
+            OrganizationType type, List<AccountEntity> admins) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.paymentStrategy = paymentStrategy;
         this.type = type;
+        this.admins = admins;
     }
 
     public int getId() {
@@ -92,6 +102,14 @@ public class OrganizationEntity {
         this.type = type;
     }
 
+    public List<AccountEntity> getAdmins() {
+        return admins;
+    }
+
+    public void setAdmins(List<AccountEntity> admins) {
+        this.admins = admins;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -102,6 +120,7 @@ public class OrganizationEntity {
         result = prime * result + Float.floatToIntBits(longitude);
         result = prime * result + ((paymentStrategy == null) ? 0 : paymentStrategy.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((admins == null) ? 0 : admins.hashCode());
         return result;
     }
 
@@ -128,6 +147,11 @@ public class OrganizationEntity {
         if (paymentStrategy != other.paymentStrategy)
             return false;
         if (type != other.type)
+            return false;
+        if (admins == null) {
+            if (other.admins != null)
+                return false;
+        } else if (!admins.equals(other.admins))
             return false;
         return true;
     }

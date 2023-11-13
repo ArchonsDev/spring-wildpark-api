@@ -1,0 +1,53 @@
+package com.archons.springwildparkapi.service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.repository.AccountRepository;
+
+@Service
+public class AccountService {
+    private final AccountRepository accountRepository;
+
+    @Autowired
+    public AccountService(AccountRepository accountRepository) {
+        this.accountRepository = accountRepository;
+    }
+
+    public List<AccountEntity> getAllAccounts() {
+        Iterable<AccountEntity> iterable = accountRepository.findAll();
+        List<AccountEntity> userList = new ArrayList<>();
+        iterable.forEach(userList::add);
+        return userList;
+    }
+
+    public Optional<AccountEntity> getAccountById(int id) {
+        return accountRepository.findById(id);
+    }
+
+    public Optional<AccountEntity> updateAccount(AccountEntity updatedAccount) {
+        Optional<AccountEntity> existingAccount = accountRepository.findById(updatedAccount.getId());
+
+        if (existingAccount.isPresent()) {
+            return Optional.of(accountRepository.save(updatedAccount));
+        }
+
+        return Optional.ofNullable(null);
+    }
+
+    public boolean deleteAccount(int accountId) {
+        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+
+        if (existingAccount.isPresent()) {
+            accountRepository.delete(existingAccount.get());
+            return true;
+        }
+
+        return false;
+    }
+}

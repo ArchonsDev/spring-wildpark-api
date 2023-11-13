@@ -1,20 +1,25 @@
 package com.archons.springwildparkapi.model;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tblaccount")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class AccountEntity {
+public class AccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int id;
@@ -37,11 +42,37 @@ public abstract class AccountEntity {
     @Column(name = "is_admin")
     public boolean isAdmin;
 
+    @Column(name = "contact_no")
+    private String contactNo;
+
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "municipality")
+    private String municipality;
+
+    @Column(name = "province")
+    private String province;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "zip_code")
+    private int zipCode;
+
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     public AccountEntity() {
     }
 
     public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
-            boolean isAdmin) {
+            boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
+            String country, int zipCode, Role role) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -49,6 +80,14 @@ public abstract class AccountEntity {
         this.lastname = lastname;
         this.birthdate = birthdate;
         this.isAdmin = isAdmin;
+        this.contactNo = contactNo;
+        this.gender = gender;
+        this.street = street;
+        this.municipality = municipality;
+        this.province = province;
+        this.country = country;
+        this.zipCode = zipCode;
+        this.role = role;
     }
 
     public int getId() {
@@ -107,6 +146,100 @@ public abstract class AccountEntity {
         this.isAdmin = isAdmin;
     }
 
+    public String getContactNo() {
+        return contactNo;
+    }
+
+    public void setContactNo(String contactNo) {
+        this.contactNo = contactNo;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getMunicipality() {
+        return municipality;
+    }
+
+    public void setMunicipality(String municipality) {
+        this.municipality = municipality;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public int getZipCode() {
+        return zipCode;
+    }
+
+    public void setZipCode(int zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -118,6 +251,14 @@ public abstract class AccountEntity {
         result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
         result = prime * result + ((birthdate == null) ? 0 : birthdate.hashCode());
         result = prime * result + (isAdmin ? 1231 : 1237);
+        result = prime * result + ((contactNo == null) ? 0 : contactNo.hashCode());
+        result = prime * result + ((gender == null) ? 0 : gender.hashCode());
+        result = prime * result + ((street == null) ? 0 : street.hashCode());
+        result = prime * result + ((municipality == null) ? 0 : municipality.hashCode());
+        result = prime * result + ((province == null) ? 0 : province.hashCode());
+        result = prime * result + ((country == null) ? 0 : country.hashCode());
+        result = prime * result + zipCode;
+        result = prime * result + ((role == null) ? 0 : role.hashCode());
         return result;
     }
 
@@ -158,6 +299,40 @@ public abstract class AccountEntity {
         } else if (!birthdate.equals(other.birthdate))
             return false;
         if (isAdmin != other.isAdmin)
+            return false;
+        if (contactNo == null) {
+            if (other.contactNo != null)
+                return false;
+        } else if (!contactNo.equals(other.contactNo))
+            return false;
+        if (gender == null) {
+            if (other.gender != null)
+                return false;
+        } else if (!gender.equals(other.gender))
+            return false;
+        if (street == null) {
+            if (other.street != null)
+                return false;
+        } else if (!street.equals(other.street))
+            return false;
+        if (municipality == null) {
+            if (other.municipality != null)
+                return false;
+        } else if (!municipality.equals(other.municipality))
+            return false;
+        if (province == null) {
+            if (other.province != null)
+                return false;
+        } else if (!province.equals(other.province))
+            return false;
+        if (country == null) {
+            if (other.country != null)
+                return false;
+        } else if (!country.equals(other.country))
+            return false;
+        if (zipCode != other.zipCode)
+            return false;
+        if (role != other.role)
             return false;
         return true;
     }

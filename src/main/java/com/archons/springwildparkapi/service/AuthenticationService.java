@@ -8,20 +8,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.archons.springwildparkapi.auth.AuthenticationRequest;
 import com.archons.springwildparkapi.auth.AuthenticationResponse;
 import com.archons.springwildparkapi.auth.RegisterRequest;
+import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.Role;
-import com.archons.springwildparkapi.model.User;
-import com.archons.springwildparkapi.repository.UserRepository;
+import com.archons.springwildparkapi.repository.AccountRepository;
 
 @Service
 public class AuthenticationService {
-    private final UserRepository repository;
+    private final AccountRepository accountRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationService(UserRepository repository, JwtService jwtService,
+    public AuthenticationService(AccountRepository accountRepository, JwtService jwtService,
             AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
-        this.repository = repository;
+        this.accountRepository = accountRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
@@ -29,20 +29,20 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         // Creates a new user and returns a JWT Token
-        User user = new User();
+        AccountEntity account = new AccountEntity();
 
         // Set fields
-        user.setFirstname(request.getFirstname());
-        user.setLastname(request.getLastname());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.USER);
+        account.setFirstname(request.getFirstname());
+        account.setLastname(request.getLastname());
+        account.setEmail(request.getEmail());
+        account.setPassword(passwordEncoder.encode(request.getPassword()));
+        account.setRole(Role.USER);
 
         // Save user
-        repository.save(user);
+        accountRepository.save(account);
 
         // Create JWT Token
-        String jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(account);
 
         return new AuthenticationResponse(jwtToken);
     }
@@ -53,11 +53,11 @@ public class AuthenticationService {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
         // Find user from DB
-        User user = repository.findByEmail(request.getEmail())
+        AccountEntity account = accountRepository.findByEmail(request.getEmail())
                 .orElseThrow();
 
         // Generate JWT Token
-        String jtwToken = jwtService.generateToken(user);
+        String jtwToken = jwtService.generateToken(account);
 
         return new AuthenticationResponse(jtwToken);
     }
