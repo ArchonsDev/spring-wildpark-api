@@ -7,7 +7,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.archons.springwildparkapi.dto.AccountUpdateRequest;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.AccountRepository;
 
 @Service
@@ -19,7 +22,12 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public List<AccountEntity> getAllAccounts() {
+    public List<AccountEntity> getAllAccounts(AccountEntity requester) throws InsufficientPrivillegesException {
+        // Checks if the requester is an admin
+        if (requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
+        }
+
         Iterable<AccountEntity> iterable = accountRepository.findAll();
         List<AccountEntity> userList = new ArrayList<>();
         iterable.forEach(userList::add);
@@ -30,14 +38,22 @@ public class AccountService {
         return accountRepository.findById(id);
     }
 
-    public Optional<AccountEntity> updateAccount(AccountEntity updatedAccount) {
-        Optional<AccountEntity> existingAccount = accountRepository.findById(updatedAccount.getId());
+    public Optional<AccountEntity> updateAccount(AccountUpdateRequest accountUpdateRequest)
+            throws InsufficientPrivillegesException {
+        AccountEntity requester = accountUpdateRequest.getRequester();
+        AccountEntity updatedAccount = accountUpdateRequest.getUpdatedAccount();
 
-        if (existingAccount.isPresent()) {
-            return Optional.of(accountRepository.save(updatedAccount));
+        if (requester.getId() != updatedAccount.getId() || requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
         }
 
-        return Optional.ofNullable(null);
+        Optional<AccountEntity> existingAccount = accountRepository.findById(updatedAccount.getId());
+
+        if (!existingAccount.isPresent() || requester.getRole() != Role.ADMIN) {
+            return Optional.ofNullable(null);
+        }
+
+        return Optional.of(accountRepository.save(updatedAccount));
     }
 
     public boolean deleteAccount(int accountId) {

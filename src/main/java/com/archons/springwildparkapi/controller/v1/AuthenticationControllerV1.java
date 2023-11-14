@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.auth.AuthenticationRequest;
-import com.archons.springwildparkapi.auth.AuthenticationResponse;
-import com.archons.springwildparkapi.auth.RegisterRequest;
+import com.archons.springwildparkapi.dto.AuthenticationRequest;
+import com.archons.springwildparkapi.dto.AuthenticationResponse;
+import com.archons.springwildparkapi.dto.RegisterRequest;
 import com.archons.springwildparkapi.service.AuthenticationService;
 
 @RestController
