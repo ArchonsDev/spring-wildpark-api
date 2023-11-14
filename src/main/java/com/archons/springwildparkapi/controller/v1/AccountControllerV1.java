@@ -57,14 +57,15 @@ public class AccountControllerV1 {
         return ResponseEntity.ok(account);
     }
 
-    @PutMapping("/")
+    @PutMapping("/{id}")
     public ResponseEntity<Optional<AccountEntity>> updateAccount(
-            @RequestBody AccountUpdateRequest accountUpdateRequest) {
+            @RequestBody AccountUpdateRequest accountUpdateRequest,
+            @RequestParam int accountId) {
         /* Updates an account */
         Optional<AccountEntity> account;
 
         try {
-            account = accountService.updateAccount(accountUpdateRequest);
+            account = accountService.updateAccount(accountUpdateRequest, accountId);
         } catch (InsufficientPrivillegesException ex) {
             return ResponseEntity.badRequest().build();
         }

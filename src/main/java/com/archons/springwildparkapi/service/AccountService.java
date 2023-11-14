@@ -38,16 +38,16 @@ public class AccountService {
         return accountRepository.findById(id);
     }
 
-    public Optional<AccountEntity> updateAccount(AccountUpdateRequest accountUpdateRequest)
+    public Optional<AccountEntity> updateAccount(AccountUpdateRequest accountUpdateRequest, int accountId)
             throws InsufficientPrivillegesException {
         AccountEntity requester = accountUpdateRequest.getRequester();
         AccountEntity updatedAccount = accountUpdateRequest.getUpdatedAccount();
 
-        if (requester.getId() != updatedAccount.getId() || requester.getRole() != Role.ADMIN) {
+        if (requester.getId() != updatedAccount.getId() && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivillegesException();
         }
 
-        Optional<AccountEntity> existingAccount = accountRepository.findById(updatedAccount.getId());
+        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
 
         if (!existingAccount.isPresent() || requester.getRole() != Role.ADMIN) {
             return Optional.ofNullable(null);
