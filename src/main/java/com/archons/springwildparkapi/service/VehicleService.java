@@ -44,14 +44,21 @@ public class VehicleService {
         return existingVehicle;
     }
 
-    public Optional<VehicleEntity> updateVehicle(VehicleEntity updatedvehicle) {
+    public Optional<VehicleEntity> updateVehicle(AccountEntity requester, VehicleEntity updatedvehicle)
+            throws InsufficientPrivillegesException {
         Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(updatedvehicle.getId());
 
-        if (existingVehicle.isPresent()) {
-            return Optional.of(vehicleRepository.save(updatedvehicle));
+        if (!existingVehicle.isPresent()) {
+            existingVehicle = Optional.ofNullable(null);
         }
 
-        return Optional.ofNullable(null);
+        if (!requester.equals(updatedvehicle.getOwner()) && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
+        }
+
+        existingVehicle = Optional.of(vehicleRepository.save(updatedvehicle));
+
+        return existingVehicle;
     }
 
     public boolean deleteVehicle(int vehicleId) {

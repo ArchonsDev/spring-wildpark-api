@@ -76,7 +76,7 @@ public class AccountControllerV1 {
         return ResponseEntity.ok(account);
     }
 
-    @GetMapping("{accountId}/vehicles")
+    @GetMapping("/{accountId}/vehicles")
     public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestParam int accountId,
             @RequestBody AccountEntity requester) {
         Optional<AccountEntity> existingAccount = accountService.getAccountById(accountId);
@@ -96,7 +96,7 @@ public class AccountControllerV1 {
         return ResponseEntity.ok(vehicleList);
     }
 
-    @GetMapping("{accountId}/vehicles/{vehicleId}")
+    @GetMapping("/{accountId}/vehicles/{vehicleId}")
     public ResponseEntity<Optional<VehicleEntity>> getAccountVehicle(@RequestParam int accountId,
             @RequestParam int vehicleId,
             @RequestBody AccountEntity requester) {
