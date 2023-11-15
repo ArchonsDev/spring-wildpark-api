@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.auth;
+package com.archons.springwildparkapi.dto;
 
 public class RegisterRequest {
     private String firstname;
