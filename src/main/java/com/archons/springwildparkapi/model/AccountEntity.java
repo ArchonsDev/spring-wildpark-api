@@ -15,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -67,12 +68,15 @@ public class AccountEntity implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @OneToMany(mappedBy = "owner")
+    private List<VehicleEntity> vehicles;
+
     public AccountEntity() {
     }
 
     public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
             boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
-            String country, int zipCode, Role role) {
+            String country, int zipCode, Role role, List<VehicleEntity> vehicles) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -88,6 +92,7 @@ public class AccountEntity implements UserDetails {
         this.country = country;
         this.zipCode = zipCode;
         this.role = role;
+        this.vehicles = vehicles;
     }
 
     public int getId() {
@@ -210,6 +215,14 @@ public class AccountEntity implements UserDetails {
         this.role = role;
     }
 
+    public List<VehicleEntity> getVehicles() {
+        return vehicles;
+    }
+
+    public void setVehicles(List<VehicleEntity> vehicles) {
+        this.vehicles = vehicles;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -259,6 +272,7 @@ public class AccountEntity implements UserDetails {
         result = prime * result + ((country == null) ? 0 : country.hashCode());
         result = prime * result + zipCode;
         result = prime * result + ((role == null) ? 0 : role.hashCode());
+        result = prime * result + ((vehicles == null) ? 0 : vehicles.hashCode());
         return result;
     }
 
@@ -333,6 +347,11 @@ public class AccountEntity implements UserDetails {
         if (zipCode != other.zipCode)
             return false;
         if (role != other.role)
+            return false;
+        if (vehicles == null) {
+            if (other.vehicles != null)
+                return false;
+        } else if (!vehicles.equals(other.vehicles))
             return false;
         return true;
     }

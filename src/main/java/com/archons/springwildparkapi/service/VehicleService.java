@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.VehicleEntity;
@@ -20,6 +21,25 @@ public class VehicleService {
     @Autowired
     public VehicleService(VehicleRepository vehicleRepository) {
         this.vehicleRepository = vehicleRepository;
+    }
+
+    public Optional<VehicleEntity> addVehicle(AccountEntity requester, VehicleEntity newVehicle)
+            throws VehicleAlreadyExistsException {
+        List<VehicleEntity> vehicleList = requester.getVehicles();
+        boolean isUnique = true;
+
+        for (VehicleEntity vehicle : vehicleList) {
+            if (vehicle.equals(newVehicle)) {
+                isUnique = false;
+                break;
+            }
+        }
+
+        if (!isUnique) {
+            throw new VehicleAlreadyExistsException();
+        }
+
+        return Optional.of(vehicleRepository.save(newVehicle));
     }
 
     public List<VehicleEntity> getAllVehicles() {
@@ -71,36 +91,4 @@ public class VehicleService {
 
         return false;
     }
-
-    public List<VehicleEntity> getAllAccountVehicles(AccountEntity account, AccountEntity requester)
-            throws InsufficientPrivillegesException {
-        Iterable<VehicleEntity> iterable = vehicleRepository.findAll();
-        List<VehicleEntity> vehicleList = new ArrayList<>();
-
-        if (!requester.equals(account) && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
-        }
-
-        for (VehicleEntity vehicle : iterable) {
-            if (vehicle.getOwner().equals(account)) {
-                vehicleList.add(vehicle);
-            }
-        }
-
-        return vehicleList;
-    }
-
-    public Optional<VehicleEntity> getAccountVehicle(AccountEntity account, AccountEntity requester, int vehicleId)
-            throws InsufficientPrivillegesException {
-        List<VehicleEntity> accountVehicles = getAllAccountVehicles(account, requester);
-
-        for (VehicleEntity vehicle : accountVehicles) {
-            if (vehicle.getId() == vehicleId) {
-                return Optional.of(vehicle);
-            }
-        }
-
-        return Optional.ofNullable(null);
-    }
-
 }

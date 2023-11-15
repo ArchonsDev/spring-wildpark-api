@@ -17,32 +17,39 @@ import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.service.AccountService;
-import com.archons.springwildparkapi.service.VehicleService;
 
 @RestController
 @RequestMapping("/api/v1/accounts")
 public class AccountControllerV1 {
+    /*
+     * This controller class handles all account related requests
+     * 
+     * Endpoints:
+     * GET /api/v1/accounts/
+     * GET /api/v1/accounts/{id}
+     * PUT /api/v1/accounts/{id}
+     * GET /api/v1/accounts/{id}/vehicles
+     * TODO: GET /api/v1/accounts/{id}/organizations
+     * TODO: GET /api/v1/accounts/{id}/bookings
+     * TODO: GET /api/v1/accounts/{id}/payments
+     * 
+     */
+
     private final AccountService accountService;
-    private final VehicleService vehicleService;
 
     @Autowired
-    public AccountControllerV1(AccountService accountService, VehicleService vehicleService) {
+    public AccountControllerV1(AccountService accountService) {
         this.accountService = accountService;
-        this.vehicleService = vehicleService;
     }
 
     @GetMapping("/")
     public ResponseEntity<List<AccountEntity>> getAllAccounts(@RequestBody AccountEntity requester) {
         /* Retrieve list of all accounts */
-        List<AccountEntity> accountList;
-
         try {
-            accountList = accountService.getAllAccounts(requester);
+            return ResponseEntity.ok(accountService.getAllAccounts(requester));
         } catch (InsufficientPrivillegesException ex) {
             return ResponseEntity.badRequest().build();
         }
-
-        return ResponseEntity.ok(accountList);
     }
 
     @GetMapping("/{id}")
@@ -62,19 +69,17 @@ public class AccountControllerV1 {
             @RequestBody AccountUpdateRequest accountUpdateRequest,
             @RequestParam int accountId) {
         /* Updates an account */
-        Optional<AccountEntity> account;
-
         try {
-            account = accountService.updateAccount(accountUpdateRequest, accountId);
+            Optional<AccountEntity> account = accountService.updateAccount(accountUpdateRequest, accountId);
+
+            if (!account.isPresent()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            return ResponseEntity.ok(account);
         } catch (InsufficientPrivillegesException ex) {
             return ResponseEntity.badRequest().build();
         }
-
-        if (!account.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/{accountId}/vehicles")
@@ -86,36 +91,8 @@ public class AccountControllerV1 {
             return ResponseEntity.notFound().build();
         }
 
-        List<VehicleEntity> vehicleList;
-
-        try {
-            vehicleList = vehicleService.getAllAccountVehicles(existingAccount.get(), requester);
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
-        }
+        List<VehicleEntity> vehicleList = existingAccount.get().getVehicles();
 
         return ResponseEntity.ok(vehicleList);
-    }
-
-    @GetMapping("/{accountId}/vehicles/{vehicleId}")
-    public ResponseEntity<Optional<VehicleEntity>> getAccountVehicle(@RequestParam int accountId,
-            @RequestParam int vehicleId,
-            @RequestBody AccountEntity requester) {
-        Optional<AccountEntity> existingAccount = accountService.getAccountById(accountId);
-
-        if (!existingAccount.isPresent()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        Optional<VehicleEntity> existingVehicle;
-
-        try {
-            existingVehicle = vehicleService.getAccountVehicle(existingAccount.get(), requester,
-                    vehicleId);
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.ok(existingVehicle);
     }
 }
