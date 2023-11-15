@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.AccountUpdateRequest;
+import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.service.AccountService;
 
@@ -29,7 +31,7 @@ public class AccountControllerV1 {
      * GET /api/v1/accounts/{id}
      * PUT /api/v1/accounts/{id}
      * GET /api/v1/accounts/{id}/vehicles
-     * TODO: GET /api/v1/accounts/{id}/organizations
+     * GET /api/v1/accounts/{id}/organizations
      * TODO: GET /api/v1/accounts/{id}/bookings
      * TODO: GET /api/v1/accounts/{id}/payments
      * 
@@ -52,16 +54,17 @@ public class AccountControllerV1 {
         }
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<AccountEntity>> getAccountById(@RequestParam int id) {
+    @GetMapping("/{accountId}")
+    public ResponseEntity<Optional<AccountEntity>> getAccountById(@RequestBody AccountEntity requester,
+            @RequestParam int accountId) {
         /* Retrieves the account with the specified id */
-        Optional<AccountEntity> account = accountService.getAccountById(id);
-
-        if (!account.isPresent()) {
+        try {
+            return ResponseEntity.ok(accountService.getAccountById(requester, accountId));
+        } catch (InsufficientPrivillegesException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
-
-        return ResponseEntity.ok(account);
     }
 
     @PutMapping("/{id}")
@@ -70,29 +73,35 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         /* Updates an account */
         try {
-            Optional<AccountEntity> account = accountService.updateAccount(accountUpdateRequest, accountId);
-
-            if (!account.isPresent()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            return ResponseEntity.ok(account);
+            return ResponseEntity.ok(accountService.updateAccount(accountUpdateRequest, accountId));
         } catch (InsufficientPrivillegesException ex) {
             return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{accountId}/vehicles")
-    public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestParam int accountId,
-            @RequestBody AccountEntity requester) {
-        Optional<AccountEntity> existingAccount = accountService.getAccountById(accountId);
-
-        if (!existingAccount.isPresent()) {
+    public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestBody AccountEntity requester,
+            @RequestParam int accountId) {
+        try {
+            return ResponseEntity.ok(accountService.getAccountVehicles(requester, accountId));
+        } catch (InsufficientPrivillegesException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
+    }
 
-        List<VehicleEntity> vehicleList = existingAccount.get().getVehicles();
-
-        return ResponseEntity.ok(vehicleList);
+    @GetMapping("/{accountId}/organizations")
+    public ResponseEntity<List<OrganizationEntity>> getAccountOrganizations(@RequestBody AccountEntity requester,
+            @RequestParam int accountId) {
+        try {
+            return ResponseEntity.ok(accountService.getAccountOrganizations(requester, accountId));
+        } catch (InsufficientPrivillegesException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

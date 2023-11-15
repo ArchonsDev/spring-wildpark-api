@@ -1,6 +1,7 @@
 package com.archons.springwildparkapi.model;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -106,6 +107,14 @@ public class OrganizationEntity {
 
     public void setOrganizationAccounts(List<OrganizationAccountEntity> organizationAccounts) {
         this.organizationAccounts = organizationAccounts;
+    }
+
+    public List<AccountEntity> getAccounts() {
+        List<AccountEntity> accounts = getOrganizationAccounts().stream()
+                .map(OrganizationAccountEntity::getAccount)
+                .collect(Collectors.toList());
+
+        return accounts;
     }
 
     @Override
