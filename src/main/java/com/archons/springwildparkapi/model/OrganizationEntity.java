@@ -9,9 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -36,22 +34,22 @@ public class OrganizationEntity {
     @Enumerated(EnumType.STRING)
     private OrganizationType type;
 
-    @ManyToMany
-    @JoinTable(name = "tblorganizationadmin", joinColumns = @JoinColumn(name = "organization_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
-    private List<AccountEntity> admins;
+    @OneToMany(mappedBy = "organization")
+    private List<OrganizationAccountEntity> organizationAccounts;
 
     public OrganizationEntity() {
     }
 
     public OrganizationEntity(int id, String name, float latitude, float longitude, PaymentStrategy paymentStrategy,
-            OrganizationType type, List<AccountEntity> admins) {
+            OrganizationType type, List<AccountEntity> admins, List<AccountEntity> members,
+            List<OrganizationAccountEntity> organizationAccounts) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.paymentStrategy = paymentStrategy;
         this.type = type;
-        this.admins = admins;
+        this.organizationAccounts = organizationAccounts;
     }
 
     public int getId() {
@@ -102,12 +100,12 @@ public class OrganizationEntity {
         this.type = type;
     }
 
-    public List<AccountEntity> getAdmins() {
-        return admins;
+    public List<OrganizationAccountEntity> getOrganizationAccounts() {
+        return organizationAccounts;
     }
 
-    public void setAdmins(List<AccountEntity> admins) {
-        this.admins = admins;
+    public void setOrganizationAccounts(List<OrganizationAccountEntity> organizationAccounts) {
+        this.organizationAccounts = organizationAccounts;
     }
 
     @Override
@@ -120,7 +118,7 @@ public class OrganizationEntity {
         result = prime * result + Float.floatToIntBits(longitude);
         result = prime * result + ((paymentStrategy == null) ? 0 : paymentStrategy.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((admins == null) ? 0 : admins.hashCode());
+        result = prime * result + ((organizationAccounts == null) ? 0 : organizationAccounts.hashCode());
         return result;
     }
 
@@ -148,10 +146,10 @@ public class OrganizationEntity {
             return false;
         if (type != other.type)
             return false;
-        if (admins == null) {
-            if (other.admins != null)
+        if (organizationAccounts == null) {
+            if (other.organizationAccounts != null)
                 return false;
-        } else if (!admins.equals(other.admins))
+        } else if (!organizationAccounts.equals(other.organizationAccounts))
             return false;
         return true;
     }
