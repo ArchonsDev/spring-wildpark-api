@@ -12,8 +12,10 @@ import com.archons.springwildparkapi.dto.AccountUpdateRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.OrganizationAccountEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
+import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.repository.AccountRepository;
@@ -63,7 +65,7 @@ public class AccountService {
             throw new InsufficientPrivillegesException();
         }
 
-        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
 
         if (!existingAccount.isPresent()) {
             throw new AccountNotFoundException();
@@ -72,8 +74,13 @@ public class AccountService {
         return Optional.of(accountRepository.save(updatedAccount));
     }
 
-    public boolean deleteAccount(int accountId) {
-        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+    public boolean deleteAccount(AccountEntity requester, int accountId)
+            throws InsufficientPrivillegesException, AccountNotFoundException {
+        if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
+        }
+
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
 
         if (existingAccount.isPresent()) {
             accountRepository.delete(existingAccount.get());
@@ -89,7 +96,7 @@ public class AccountService {
             throw new InsufficientPrivillegesException();
         }
 
-        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
 
         if (!existingAccount.isPresent()) {
             throw new AccountNotFoundException();
@@ -104,7 +111,7 @@ public class AccountService {
             throw new InsufficientPrivillegesException();
         }
 
-        Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
 
         if (!existingAccount.isPresent()) {
             throw new AccountNotFoundException();
@@ -113,5 +120,35 @@ public class AccountService {
         return existingAccount.get().getOrganizationAccounts().stream()
                 .map(OrganizationAccountEntity::getOrganization)
                 .collect(Collectors.toList());
+    }
+
+    public List<BookingEntity> getAccountBookings(AccountEntity requester, int accountId)
+            throws InsufficientPrivillegesException, AccountNotFoundException {
+        if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
+        }
+
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
+
+        if (!existingAccount.isPresent()) {
+            throw new AccountNotFoundException();
+        }
+
+        return existingAccount.get().getBookings();
+    }
+
+    public List<PaymentEntity> getAccountPayments(AccountEntity requester, int accountId)
+            throws InsufficientPrivillegesException, AccountNotFoundException {
+        if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivillegesException();
+        }
+
+        Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
+
+        if (!existingAccount.isPresent()) {
+            throw new AccountNotFoundException();
+        }
+
+        return existingAccount.get().getPayments();
     }
 }

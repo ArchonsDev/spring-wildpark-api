@@ -16,7 +16,9 @@ import com.archons.springwildparkapi.dto.AccountUpdateRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
+import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.service.AccountService;
 
@@ -32,8 +34,8 @@ public class AccountControllerV1 {
      * PUT /api/v1/accounts/{id}
      * GET /api/v1/accounts/{id}/vehicles
      * GET /api/v1/accounts/{id}/organizations
-     * TODO: GET /api/v1/accounts/{id}/bookings
-     * TODO: GET /api/v1/accounts/{id}/payments
+     * GET /api/v1/accounts/{id}/bookings
+     * GET /api/v1/accounts/{id}/payments
      * 
      */
 
@@ -98,6 +100,30 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountOrganizations(requester, accountId));
+        } catch (InsufficientPrivillegesException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{accountId}/bookings")
+    public ResponseEntity<List<BookingEntity>> getAccountBookings(@RequestBody AccountEntity requester,
+            @RequestParam int accountId) {
+        try {
+            return ResponseEntity.ok(accountService.getAccountBookings(requester, accountId));
+        } catch (InsufficientPrivillegesException ex) {
+            return ResponseEntity.badRequest().build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/{accountId}/payments")
+    public ResponseEntity<List<PaymentEntity>> getAccountPayments(@RequestBody AccountEntity requester,
+            @RequestParam int accountId) {
+        try {
+            return ResponseEntity.ok(accountService.getAccountPayments(requester, accountId));
         } catch (InsufficientPrivillegesException ex) {
             return ResponseEntity.badRequest().build();
         } catch (AccountNotFoundException ex) {
