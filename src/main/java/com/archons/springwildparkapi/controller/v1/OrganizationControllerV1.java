@@ -11,6 +11,13 @@ import com.archons.springwildparkapi.service.OrganizationService;
 public class OrganizationControllerV1 {
     /*
      * This controller class handles all organization related requests
+     * 
+     * Endpoints:
+     * TODO: POST /api/v1/organizaations/
+     * TODO: GET /api/v1/organizaations/{organizationId}
+     * TODO: DELETE /api/v1/organizaations/{organizationId}
+     * TODO: GET /api/v1/organizaations/{organizationId}/parkingareas
+     * 
      */
     private OrganizationService organizationService;
 
