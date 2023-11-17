@@ -11,6 +11,10 @@ import com.archons.springwildparkapi.service.PaymentService;
 public class PaymentControllerV1 {
     /*
      * This controller class handles all payment related requests
+     * 
+     * Endpoints:
+     * TODO: GET /api/v1/payments/{paymentId}
+     * TODO: PUT /api/v1/payments/{paymentId}
      */
     private PaymentService paymentService;
 

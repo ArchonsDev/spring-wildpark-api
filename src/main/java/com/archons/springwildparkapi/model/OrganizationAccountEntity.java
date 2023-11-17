@@ -29,6 +29,89 @@ public class OrganizationAccountEntity {
 
     @Enumerated(EnumType.STRING)
     private OrganizationRole organizationRole;
+
+    public OrganizationAccountEntity() {
+    }
+
+    public OrganizationAccountEntity(OrganizationMemberId organizationMemberId, OrganizationEntity organization,
+            AccountEntity account, OrganizationRole organizationRole) {
+        this.organizationMemberId = organizationMemberId;
+        this.organization = organization;
+        this.account = account;
+        this.organizationRole = organizationRole;
+    }
+
+    public OrganizationMemberId getOrganizationMemberId() {
+        return organizationMemberId;
+    }
+
+    public void setOrganizationMemberId(OrganizationMemberId organizationMemberId) {
+        this.organizationMemberId = organizationMemberId;
+    }
+
+    public OrganizationEntity getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(OrganizationEntity organization) {
+        this.organization = organization;
+    }
+
+    public AccountEntity getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountEntity account) {
+        this.account = account;
+    }
+
+    public OrganizationRole getOrganizationRole() {
+        return organizationRole;
+    }
+
+    public void setOrganizationRole(OrganizationRole organizationRole) {
+        this.organizationRole = organizationRole;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((organizationMemberId == null) ? 0 : organizationMemberId.hashCode());
+        result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+        result = prime * result + ((account == null) ? 0 : account.hashCode());
+        result = prime * result + ((organizationRole == null) ? 0 : organizationRole.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OrganizationAccountEntity other = (OrganizationAccountEntity) obj;
+        if (organizationMemberId == null) {
+            if (other.organizationMemberId != null)
+                return false;
+        } else if (!organizationMemberId.equals(other.organizationMemberId))
+            return false;
+        if (organization == null) {
+            if (other.organization != null)
+                return false;
+        } else if (!organization.equals(other.organization))
+            return false;
+        if (account == null) {
+            if (other.account != null)
+                return false;
+        } else if (!account.equals(other.account))
+            return false;
+        if (organizationRole != other.organizationRole)
+            return false;
+        return true;
+    }
 }
 
 class OrganizationMemberId implements Serializable {
