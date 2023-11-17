@@ -25,7 +25,7 @@ public class PaymentService {
         List<PaymentEntity> paymentList = new ArrayList<>();
 
         for (PaymentEntity payment : iterable) {
-            if (payment.getAccount().equals(account)) {
+            if (payment.getPayor().equals(account)) {
                 paymentList.add(payment);
             }
         }

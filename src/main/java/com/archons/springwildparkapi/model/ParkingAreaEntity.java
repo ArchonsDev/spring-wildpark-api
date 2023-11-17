@@ -22,8 +22,7 @@ public class ParkingAreaEntity {
     @Column(name = "slots")
     private int slots;
 
-    @OneToMany
-    @JoinColumn(name = "parking_area_id")
+    @OneToMany(mappedBy = "parkingArea")
     private List<VehicleEntity> parkedVehicles;
 
     @OneToOne

@@ -35,16 +35,22 @@ public abstract class VehicleEntity {
     @JoinColumn(name = "owner_id")
     private AccountEntity owner;
 
+    @ManyToOne
+    @JoinColumn(name = "parking_area_id")
+    private ParkingAreaEntity parkingArea;
+
     public VehicleEntity() {
     }
 
-    public VehicleEntity(int id, String make, String model, String plateNumber, String color, AccountEntity owner) {
+    public VehicleEntity(int id, String make, String model, String plateNumber, String color, AccountEntity owner,
+            ParkingAreaEntity parkingArea) {
         this.id = id;
         this.make = make;
         this.model = model;
         this.plateNumber = plateNumber;
         this.color = color;
         this.owner = owner;
+        this.parkingArea = parkingArea;
     }
 
     public int getId() {
@@ -95,6 +101,14 @@ public abstract class VehicleEntity {
         this.owner = owner;
     }
 
+    public ParkingAreaEntity getParkingArea() {
+        return parkingArea;
+    }
+
+    public void setParkingArea(ParkingAreaEntity parkingArea) {
+        this.parkingArea = parkingArea;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -105,6 +119,7 @@ public abstract class VehicleEntity {
         result = prime * result + ((plateNumber == null) ? 0 : plateNumber.hashCode());
         result = prime * result + ((color == null) ? 0 : color.hashCode());
         result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+        result = prime * result + ((parkingArea == null) ? 0 : parkingArea.hashCode());
         return result;
     }
 
@@ -143,6 +158,11 @@ public abstract class VehicleEntity {
             if (other.owner != null)
                 return false;
         } else if (!owner.equals(other.owner))
+            return false;
+        if (parkingArea == null) {
+            if (other.parkingArea != null)
+                return false;
+        } else if (!parkingArea.equals(other.parkingArea))
             return false;
         return true;
     }
