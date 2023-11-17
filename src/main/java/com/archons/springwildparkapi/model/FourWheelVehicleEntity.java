@@ -18,8 +18,8 @@ public class FourWheelVehicleEntity extends VehicleEntity {
     }
 
     public FourWheelVehicleEntity(int id, String make, String model, String plateNumber, String color,
-            AccountEntity owner, FourWheelVehicleType type) {
-        super(id, make, model, plateNumber, color, owner);
+            AccountEntity owner, ParkingAreaEntity parkingArea, FourWheelVehicleType type) {
+        super(id, make, model, plateNumber, color, owner, parkingArea);
         this.type = type;
     }
 

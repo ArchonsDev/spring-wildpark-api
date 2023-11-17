@@ -31,17 +31,17 @@ public class PaymentEntity {
 
     @ManyToOne
     @JoinColumn(name = "payor_id")
-    private AccountEntity account;
+    private AccountEntity payor;
 
     public PaymentEntity() {
     }
 
-    public PaymentEntity(int id, float amount, PaymentType paymentType, Date date, AccountEntity account) {
+    public PaymentEntity(int id, float amount, PaymentType paymentType, Date date, AccountEntity payor) {
         this.id = id;
         this.amount = amount;
         this.paymentType = paymentType;
         this.date = date;
-        this.account = account;
+        this.payor = payor;
     }
 
     public int getId() {
@@ -76,12 +76,12 @@ public class PaymentEntity {
         this.date = date;
     }
 
-    public AccountEntity getAccount() {
-        return account;
+    public AccountEntity getPayor() {
+        return payor;
     }
 
-    public void setAccount(AccountEntity account) {
-        this.account = account;
+    public void setPayor(AccountEntity payor) {
+        this.payor = payor;
     }
 
     @Override
@@ -92,7 +92,7 @@ public class PaymentEntity {
         result = prime * result + Float.floatToIntBits(amount);
         result = prime * result + ((paymentType == null) ? 0 : paymentType.hashCode());
         result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((account == null) ? 0 : account.hashCode());
+        result = prime * result + ((payor == null) ? 0 : payor.hashCode());
         return result;
     }
 
@@ -116,10 +116,10 @@ public class PaymentEntity {
                 return false;
         } else if (!date.equals(other.date))
             return false;
-        if (account == null) {
-            if (other.account != null)
+        if (payor == null) {
+            if (other.payor != null)
                 return false;
-        } else if (!account.equals(other.account))
+        } else if (!payor.equals(other.payor))
             return false;
         return true;
     }

@@ -16,8 +16,8 @@ public class TwoWheelVehicleEntity extends VehicleEntity {
     }
 
     public TwoWheelVehicleEntity(int id, String make, String model, String plateNumber, String color,
-            AccountEntity owner, float displacement) {
-        super(id, make, model, plateNumber, color, owner);
+            AccountEntity owner, ParkingAreaEntity parkingArea, float displacement) {
+        super(id, make, model, plateNumber, color, owner, parkingArea);
         this.displacement = displacement;
     }
 
