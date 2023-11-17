@@ -74,13 +74,20 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "account")
     private List<OrganizationAccountEntity> organizationAccounts;
 
+    @OneToMany(mappedBy = "booker")
+    private List<BookingEntity> bookings;
+
+    @OneToMany(mappedBy = "payor")
+    private List<PaymentEntity> payments;
+
     public AccountEntity() {
     }
 
     public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
             boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
             String country, int zipCode, Role role, List<VehicleEntity> vehicles,
-            List<OrganizationAccountEntity> organizationAccounts) {
+            List<OrganizationAccountEntity> organizationAccounts, List<BookingEntity> bookings,
+            List<PaymentEntity> payments) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -98,6 +105,8 @@ public class AccountEntity implements UserDetails {
         this.role = role;
         this.vehicles = vehicles;
         this.organizationAccounts = organizationAccounts;
+        this.bookings = bookings;
+        this.payments = payments;
     }
 
     public int getId() {
@@ -236,6 +245,22 @@ public class AccountEntity implements UserDetails {
         this.organizationAccounts = organizationAccounts;
     }
 
+    public List<BookingEntity> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<BookingEntity> bookings) {
+        this.bookings = bookings;
+    }
+
+    public List<PaymentEntity> getPayments() {
+        return payments;
+    }
+
+    public void gsetPayments(List<PaymentEntity> payments) {
+        this.payments = payments;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -287,6 +312,8 @@ public class AccountEntity implements UserDetails {
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((vehicles == null) ? 0 : vehicles.hashCode());
         result = prime * result + ((organizationAccounts == null) ? 0 : organizationAccounts.hashCode());
+        result = prime * result + ((bookings == null) ? 0 : bookings.hashCode());
+        result = prime * result + ((payments == null) ? 0 : payments.hashCode());
         return result;
     }
 
@@ -371,6 +398,16 @@ public class AccountEntity implements UserDetails {
             if (other.organizationAccounts != null)
                 return false;
         } else if (!organizationAccounts.equals(other.organizationAccounts))
+            return false;
+        if (bookings == null) {
+            if (other.bookings != null)
+                return false;
+        } else if (!bookings.equals(other.bookings))
+            return false;
+        if (payments == null) {
+            if (other.payments != null)
+                return false;
+        } else if (!payments.equals(other.payments))
             return false;
         return true;
     }
