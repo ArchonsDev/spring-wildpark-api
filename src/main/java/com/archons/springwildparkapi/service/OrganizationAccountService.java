@@ -22,7 +22,7 @@ public class OrganizationAccountService {
 
     public boolean isOrganizationInAccount(AccountEntity account, OrganizationEntity organization) {
         List<OrganizationAccountEntity> associations = organizationAccountRepository
-                .findByIdAccountIdAndIdOrganizationId(account.getId(), organization.getId());
+                .findByAccountIdAndOrganizationId(account.getId(), organization.getId());
 
         return !associations.isEmpty();
     }
