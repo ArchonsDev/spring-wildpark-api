@@ -12,7 +12,7 @@ import com.archons.springwildparkapi.model.OrganizationRole;
 
 @Repository
 public interface OrganizationAccountRepository extends CrudRepository<OrganizationAccountEntity, Integer> {
-    List<OrganizationAccountEntity> findByIdAccountIdAndIdOrganizationId(int accountId, int organizationId);
+    List<OrganizationAccountEntity> findByAccountIdAndOrganizationId(int accountId, int organizationId);
 
     @Query("SELECT o.organizationRole FROM OrganizationAccountEntity o WHERE o.organizationAccountId.accountId = :accountId AND o.organizationAccountId.organizationId = :organizationId")
     OrganizationRole findOrganizationRoleByAccountIdAndOrganizationId(
