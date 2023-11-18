@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 @Table(name = "tblorganizationmember")
 public class OrganizationAccountEntity {
     @EmbeddedId
-    private OrganizationMemberId organizationMemberId;
+    private OrganizationAccountId organizationAccountId;
 
     @ManyToOne
     @MapsId("organizationId")
@@ -33,20 +33,20 @@ public class OrganizationAccountEntity {
     public OrganizationAccountEntity() {
     }
 
-    public OrganizationAccountEntity(OrganizationMemberId organizationMemberId, OrganizationEntity organization,
+    public OrganizationAccountEntity(OrganizationAccountId organizationAccountId, OrganizationEntity organization,
             AccountEntity account, OrganizationRole organizationRole) {
-        this.organizationMemberId = organizationMemberId;
+        this.organizationAccountId = organizationAccountId;
         this.organization = organization;
         this.account = account;
         this.organizationRole = organizationRole;
     }
 
-    public OrganizationMemberId getOrganizationMemberId() {
-        return organizationMemberId;
+    public OrganizationAccountId getOrganizationMemberId() {
+        return organizationAccountId;
     }
 
-    public void setOrganizationMemberId(OrganizationMemberId organizationMemberId) {
-        this.organizationMemberId = organizationMemberId;
+    public void setOrganizationMemberId(OrganizationAccountId organizationAccountId) {
+        this.organizationAccountId = organizationAccountId;
     }
 
     public OrganizationEntity getOrganization() {
@@ -77,7 +77,7 @@ public class OrganizationAccountEntity {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((organizationMemberId == null) ? 0 : organizationMemberId.hashCode());
+        result = prime * result + ((organizationAccountId == null) ? 0 : organizationAccountId.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + ((account == null) ? 0 : account.hashCode());
         result = prime * result + ((organizationRole == null) ? 0 : organizationRole.hashCode());
@@ -93,10 +93,10 @@ public class OrganizationAccountEntity {
         if (getClass() != obj.getClass())
             return false;
         OrganizationAccountEntity other = (OrganizationAccountEntity) obj;
-        if (organizationMemberId == null) {
-            if (other.organizationMemberId != null)
+        if (organizationAccountId == null) {
+            if (other.organizationAccountId != null)
                 return false;
-        } else if (!organizationMemberId.equals(other.organizationMemberId))
+        } else if (!organizationAccountId.equals(other.organizationAccountId))
             return false;
         if (organization == null) {
             if (other.organization != null)
@@ -114,14 +114,14 @@ public class OrganizationAccountEntity {
     }
 }
 
-class OrganizationMemberId implements Serializable {
+class OrganizationAccountId implements Serializable {
     private int accountId;
     private int organizationId;
 
-    public OrganizationMemberId() {
+    public OrganizationAccountId() {
     }
 
-    public OrganizationMemberId(int accountId, int organizationId) {
+    public OrganizationAccountId(int accountId, int organizationId) {
         this.accountId = accountId;
         this.organizationId = organizationId;
     }
@@ -159,7 +159,7 @@ class OrganizationMemberId implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OrganizationMemberId other = (OrganizationMemberId) obj;
+        OrganizationAccountId other = (OrganizationAccountId) obj;
         if (accountId != other.accountId)
             return false;
         if (organizationId != other.organizationId)

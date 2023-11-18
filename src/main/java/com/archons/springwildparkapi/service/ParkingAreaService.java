@@ -1,60 +1,94 @@
 package com.archons.springwildparkapi.service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.model.OrganizationEntity;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
+import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
+import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.OrganizationRole;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
+import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.ParkingAreaRepository;
 
 @Service
 public class ParkingAreaService {
     private final ParkingAreaRepository parkingAreaRepository;
+    private final OrganizationAccountService organizationAccountService;
 
     @Autowired
-    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository) {
+    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository,
+            OrganizationAccountService organizationAccountService) {
         this.parkingAreaRepository = parkingAreaRepository;
+        this.organizationAccountService = organizationAccountService;
     }
 
-    public List<ParkingAreaEntity> getParkingAreaByOrganization(OrganizationEntity organization) {
-        Iterable<ParkingAreaEntity> iterable = parkingAreaRepository.findAll();
-        List<ParkingAreaEntity> parkingAreaList = new ArrayList<>();
-
-        for (ParkingAreaEntity parkingArea : iterable) {
-            if (parkingArea.getOrganization().equals(organization)) {
-                parkingAreaList.add(parkingArea);
-            }
-        }
-
-        return parkingAreaList;
-    }
-
-    public Optional<ParkingAreaEntity> getParkingAreaById(int parkingAreaid) {
-        return parkingAreaRepository.findById(parkingAreaid);
-    }
-
-    public Optional<ParkingAreaEntity> updateParkingArea(ParkingAreaEntity updatedParkingArea) {
-        Optional<ParkingAreaEntity> existingParkingArea = parkingAreaRepository.findById(updatedParkingArea.getId());
-
-        if (existingParkingArea.isPresent()) {
-            return Optional.of(parkingAreaRepository.save(updatedParkingArea));
-        }
-
-        return Optional.ofNullable(null);
-    }
-
-    public boolean deleteParkingArea(int parkingAreaid) {
+    public Optional<ParkingAreaEntity> getParkingAreaById(AccountEntity requester, int parkingAreaid)
+            throws ParkingAreaNotFoundException, InsufficientPrivilegesException {
         Optional<ParkingAreaEntity> existingParkingArea = parkingAreaRepository.findById(parkingAreaid);
 
-        if (existingParkingArea.isPresent()) {
-            parkingAreaRepository.delete(existingParkingArea.get());
-            return true;
+        if (!existingParkingArea.isPresent()) {
+            throw new ParkingAreaNotFoundException();
         }
 
-        return false;
+        ParkingAreaEntity parkingArea = existingParkingArea.get();
+
+        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
+                && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return Optional.of(parkingArea);
+    }
+
+    public Optional<ParkingAreaEntity> updateParkingArea(AccountEntity requester, int parkingAreaId,
+            ParkingAreaEntity updatedParkingArea) throws InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        Optional<ParkingAreaEntity> existingParkingArea = parkingAreaRepository.findById(parkingAreaId);
+
+        if (!existingParkingArea.isPresent()) {
+            throw new ParkingAreaNotFoundException();
+        }
+
+        ParkingAreaEntity parkingArea = existingParkingArea.get();
+
+        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
+                && requester.getRole() != Role.ADMIN && organizationAccountService.getOrganizationRole(requester,
+                        parkingArea.getOrganization()) != OrganizationRole.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return Optional.of(parkingAreaRepository.save(updatedParkingArea));
+    }
+
+    public boolean deleteParkingArea(AccountEntity requester, int parkingId)
+            throws InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        Optional<ParkingAreaEntity> existingParkingArea = getParkingAreaById(requester, parkingId);
+
+        if (existingParkingArea.isPresent()) {
+            throw new ParkingAreaNotFoundException();
+        }
+
+        ParkingAreaEntity parkingArea = existingParkingArea.get();
+
+        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
+                && requester.getRole() != Role.ADMIN && organizationAccountService.getOrganizationRole(requester,
+                        parkingArea.getOrganization()) != OrganizationRole.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        parkingAreaRepository.delete(parkingArea);
+        return true;
+    }
+
+    public Optional<ParkingAreaEntity> addParkingArea(AccountEntity requester, ParkingAreaEntity parkingArea)
+            throws InsufficientPrivilegesException {
+        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
+                && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return Optional.of(parkingAreaRepository.save(parkingArea));
     }
 }

@@ -13,8 +13,10 @@ public class PaymentControllerV1 {
      * This controller class handles all payment related requests
      * 
      * Endpoints:
+     * TODO: POST /api/v1/payments/
      * TODO: GET /api/v1/payments/{paymentId}
      * TODO: PUT /api/v1/payments/{paymentId}
+     * 
      */
     private PaymentService paymentService;
 

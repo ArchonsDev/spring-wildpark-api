@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.Role;
@@ -50,7 +50,7 @@ public class VehicleService {
     }
 
     public Optional<VehicleEntity> getVehicleById(AccountEntity requester, int vehicleId)
-            throws InsufficientPrivillegesException {
+            throws InsufficientPrivilegesException {
         Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(vehicleId);
 
         if (!existingVehicle.isPresent()) {
@@ -58,14 +58,14 @@ public class VehicleService {
         }
 
         if (!requester.equals(existingVehicle.get().getOwner()) && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         return existingVehicle;
     }
 
     public Optional<VehicleEntity> updateVehicle(AccountEntity requester, VehicleEntity updatedvehicle)
-            throws InsufficientPrivillegesException {
+            throws InsufficientPrivilegesException {
         Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(updatedvehicle.getId());
 
         if (!existingVehicle.isPresent()) {
@@ -73,7 +73,7 @@ public class VehicleService {
         }
 
         if (!requester.equals(updatedvehicle.getOwner()) && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         existingVehicle = Optional.of(vehicleRepository.save(updatedvehicle));

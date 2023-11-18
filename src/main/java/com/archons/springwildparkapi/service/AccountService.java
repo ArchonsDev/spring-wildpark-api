@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.AccountUpdateRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.OrganizationAccountEntity;
@@ -29,10 +29,10 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    public List<AccountEntity> getAllAccounts(AccountEntity requester) throws InsufficientPrivillegesException {
+    public List<AccountEntity> getAllAccounts(AccountEntity requester) throws InsufficientPrivilegesException {
         // Checks if the requester is an admin
         if (requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Iterable<AccountEntity> iterable = accountRepository.findAll();
@@ -42,9 +42,9 @@ public class AccountService {
     }
 
     public Optional<AccountEntity> getAccountById(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = accountRepository.findById(accountId);
@@ -57,12 +57,12 @@ public class AccountService {
     }
 
     public Optional<AccountEntity> updateAccount(AccountUpdateRequest accountUpdateRequest, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         AccountEntity requester = accountUpdateRequest.getRequester();
         AccountEntity updatedAccount = accountUpdateRequest.getUpdatedAccount();
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
@@ -75,9 +75,9 @@ public class AccountService {
     }
 
     public boolean deleteAccount(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
@@ -91,9 +91,9 @@ public class AccountService {
     }
 
     public List<VehicleEntity> getAccountVehicles(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
@@ -106,9 +106,9 @@ public class AccountService {
     }
 
     public List<OrganizationEntity> getAccountOrganizations(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
@@ -123,9 +123,9 @@ public class AccountService {
     }
 
     public List<BookingEntity> getAccountBookings(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);
@@ -138,9 +138,9 @@ public class AccountService {
     }
 
     public List<PaymentEntity> getAccountPayments(AccountEntity requester, int accountId)
-            throws InsufficientPrivillegesException, AccountNotFoundException {
+            throws InsufficientPrivilegesException, AccountNotFoundException {
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivillegesException();
+            throw new InsufficientPrivilegesException();
         }
 
         Optional<AccountEntity> existingAccount = getAccountById(requester, accountId);

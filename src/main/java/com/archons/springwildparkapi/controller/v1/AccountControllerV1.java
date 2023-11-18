@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.AccountUpdateRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
@@ -51,8 +52,8 @@ public class AccountControllerV1 {
         /* Retrieve list of all accounts */
         try {
             return ResponseEntity.ok(accountService.getAllAccounts(requester));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -62,8 +63,8 @@ public class AccountControllerV1 {
         /* Retrieves the account with the specified id */
         try {
             return ResponseEntity.ok(accountService.getAccountById(requester, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -76,8 +77,8 @@ public class AccountControllerV1 {
         /* Updates an account */
         try {
             return ResponseEntity.ok(accountService.updateAccount(accountUpdateRequest, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -88,8 +89,8 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountVehicles(requester, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -100,8 +101,8 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountOrganizations(requester, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -112,8 +113,8 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountBookings(requester, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -124,8 +125,8 @@ public class AccountControllerV1 {
             @RequestParam int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountPayments(requester, accountId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
