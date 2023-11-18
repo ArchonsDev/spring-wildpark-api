@@ -15,8 +15,8 @@ public class OrganizationControllerV1 {
      * Endpoints:
      * TODO: POST /api/v1/organizaations/
      * TODO: GET /api/v1/organizaations/{organizationId}
+     * TODO: PUT /api/v1/organizaations/{organizationId}
      * TODO: DELETE /api/v1/organizaations/{organizationId}
-     * TODO: GET /api/v1/organizaations/{organizationId}/parkingareas
      * 
      */
     private OrganizationService organizationService;
