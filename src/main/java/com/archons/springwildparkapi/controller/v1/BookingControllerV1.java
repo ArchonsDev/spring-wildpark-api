@@ -3,6 +3,7 @@ package com.archons.springwildparkapi.controller.v1;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.service.BookingService;
@@ -44,8 +45,8 @@ public class BookingControllerV1 {
             @RequestBody BookingEntity newBooking) {
         try {
             return ResponseEntity.ok(bookingService.addBooking(requester, newBooking));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -54,8 +55,8 @@ public class BookingControllerV1 {
             @RequestParam int bookingId) {
         try {
             return ResponseEntity.ok(bookingService.getBookingById(requester, bookingId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -66,8 +67,8 @@ public class BookingControllerV1 {
             @RequestBody BookingEntity updatedBooking, @RequestParam int bookingId) {
         try {
             return ResponseEntity.ok(bookingService.updateBooking(requester, updatedBooking, bookingId));
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
@@ -79,8 +80,8 @@ public class BookingControllerV1 {
         try {
             bookingService.deleteBooking(requester, bookingId);
             return ResponseEntity.ok().build();
-        } catch (InsufficientPrivillegesException ex) {
-            return ResponseEntity.badRequest().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }

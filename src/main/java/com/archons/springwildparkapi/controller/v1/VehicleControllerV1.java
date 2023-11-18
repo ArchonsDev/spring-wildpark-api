@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.exceptions.InsufficientPrivillegesException;
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
@@ -49,7 +49,7 @@ public class VehicleControllerV1 {
             @RequestBody VehicleEntity updatedVehicle) {
         try {
             return ResponseEntity.ok(vehicleService.updateVehicle(requester, updatedVehicle));
-        } catch (InsufficientPrivillegesException ex) {
+        } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.badRequest().build();
         }
     }

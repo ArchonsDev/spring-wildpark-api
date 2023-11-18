@@ -7,17 +7,25 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
+import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.OrganizationAccountEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
+import com.archons.springwildparkapi.model.Role;
+import com.archons.springwildparkapi.repository.OrganizationAccountRepository;
 import com.archons.springwildparkapi.repository.ParkingAreaRepository;
 
 @Service
 public class ParkingAreaService {
     private final ParkingAreaRepository parkingAreaRepository;
+    private final OrganizationAccountRepository organizationAccountRepository;
 
     @Autowired
-    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository) {
+    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository,
+            OrganizationAccountRepository organizationAccountRepository) {
         this.parkingAreaRepository = parkingAreaRepository;
+        this.organizationAccountRepository = organizationAccountRepository;
     }
 
     public List<ParkingAreaEntity> getParkingAreaByOrganization(OrganizationEntity organization) {
@@ -56,5 +64,22 @@ public class ParkingAreaService {
         }
 
         return false;
+    }
+
+    public boolean isOrganizationInAccount(int accountId, int organizationId) {
+        List<OrganizationAccountEntity> associations = organizationAccountRepository
+                .findByIdAccountIdAndIdOrganizationId(accountId, organizationId);
+
+        return !associations.isEmpty();
+    }
+
+    public Optional<ParkingAreaEntity> addParkingArea(AccountEntity requester, ParkingAreaEntity parkingArea)
+            throws InsufficientPrivilegesException {
+        if (!isOrganizationInAccount(requester.getId(), parkingArea.getOrganization().getId())
+                && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return Optional.of(parkingAreaRepository.save(parkingArea));
     }
 }
