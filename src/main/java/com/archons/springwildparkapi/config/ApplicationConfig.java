@@ -1,5 +1,6 @@
 package com.archons.springwildparkapi.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import com.archons.springwildparkapi.repository.AccountRepository;
 public class ApplicationConfig {
     private final AccountRepository accountRepository;
 
+    @Autowired
     public ApplicationConfig(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }

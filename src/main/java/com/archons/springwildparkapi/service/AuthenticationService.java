@@ -1,6 +1,7 @@
 package com.archons.springwildparkapi.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public AuthenticationService(AccountRepository accountRepository, JwtService jwtService,
             AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
