@@ -40,7 +40,7 @@ public class BookingControllerV1 {
         this.bookingService = bookingService;
     }
 
-    @PostMapping("/bookings")
+    @PostMapping("/")
     public ResponseEntity<Optional<BookingEntity>> addBooking(@RequestBody AccountEntity requester,
             @RequestBody BookingEntity newBooking) {
         try {

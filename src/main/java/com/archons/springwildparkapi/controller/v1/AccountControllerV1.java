@@ -70,7 +70,7 @@ public class AccountControllerV1 {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{accountId}")
     public ResponseEntity<Optional<AccountEntity>> updateAccount(
             @RequestBody AccountUpdateRequest accountUpdateRequest,
             @RequestParam int accountId) {
