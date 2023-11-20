@@ -41,12 +41,13 @@ public class AuthenticationService {
         account.setRole(Role.USER);
 
         // Save user
-        accountRepository.save(account);
+        account = accountRepository.save(account);
 
         // Create JWT Token
         String jwtToken = jwtService.generateToken(account);
 
-        return new AuthenticationResponse(jwtToken);
+        account.setPassword("REDACTED");
+        return new AuthenticationResponse(jwtToken, account);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
@@ -61,6 +62,7 @@ public class AuthenticationService {
         // Generate JWT Token
         String jtwToken = jwtService.generateToken(account);
 
-        return new AuthenticationResponse(jtwToken);
+        account.setPassword("REDACTED");
+        return new AuthenticationResponse(jtwToken, account);
     }
 }
