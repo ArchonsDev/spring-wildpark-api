@@ -5,8 +5,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -59,4 +61,35 @@ public class OrganizationControllerV1 {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PutMapping("/{organizationId}")
+    public ResponseEntity<Optional<OrganizationEntity>> updateOrganization(
+            @RequestBody AccountEntity requester,
+            @RequestBody OrganizationEntity updatedOrganization,
+            @RequestParam int organizationId) {
+
+        try {
+            return ResponseEntity
+                    .ok(organizationService.updateOrganization(requester, updatedOrganization, organizationId));
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (OrganizationNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{organizationId}")
+    public ResponseEntity<Void> deleteOrganization(@RequestBody AccountEntity requester,
+            @RequestParam int organizationId) {
+        try {
+            organizationService.deleteOrganization(requester, organizationId);
+            return ResponseEntity.ok().build();
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (OrganizationNotFoundException ex) {
+
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

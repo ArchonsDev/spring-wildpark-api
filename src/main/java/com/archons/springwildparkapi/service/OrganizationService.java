@@ -60,25 +60,38 @@ public class OrganizationService {
         }
     }
 
-    public Optional<OrganizationEntity> updateOrganization(OrganizationEntity updatedOrganization) {
-        Optional<OrganizationEntity> existingOrganization = organizationRepository
-                .findById(updatedOrganization.getId());
+    public Optional<OrganizationEntity> updateOrganization(AccountEntity requester,
+            OrganizationEntity updatedOrganization, int organizationId)
+            throws InsufficientPrivilegesException, OrganizationNotFoundException {
 
-        if (existingOrganization.isPresent()) {
-            return Optional.of(organizationRepository.save(updatedOrganization));
+        if (!requester.equals(updatedOrganization.getOrganizationAccounts()) && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivilegesException();
         }
 
-        return Optional.ofNullable(null);
+        Optional<OrganizationEntity> existingOrganization = getOrganizationById(requester, organizationId);
+
+        if (existingOrganization.isPresent()) {
+            throw new OrganizationNotFoundException();
+        }
+
+        return Optional.of(organizationRepository.save(updatedOrganization));
+
     }
 
-    public boolean deleteOrganization(int organizationId) {
+    public void deleteOrganization(AccountEntity requester, int organizationId)
+            throws InsufficientPrivilegesException, OrganizationNotFoundException {
         Optional<OrganizationEntity> existingOrganization = organizationRepository.findById(organizationId);
 
         if (existingOrganization.isPresent()) {
-            organizationRepository.delete(existingOrganization.get());
-            return true;
+            OrganizationEntity organization = existingOrganization.get();
+            if (organization.getOrganizationAccounts() != requester && requester.getRole() != Role.ADMIN) {
+                throw new InsufficientPrivilegesException();
+            }
+
+            organizationRepository.delete(organization);
+        } else {
+            throw new OrganizationNotFoundException();
         }
 
-        return false;
     }
 }
