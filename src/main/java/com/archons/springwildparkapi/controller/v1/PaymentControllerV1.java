@@ -64,7 +64,7 @@ public class PaymentControllerV1 {
             }
         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
-    /* 
+    /*
     //naa try catch
     @GetMapping("/{paymentId}")
     public ResponseEntity<Optional<PaymentEntity>> getPaymentById(
