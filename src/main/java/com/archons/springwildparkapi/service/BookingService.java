@@ -25,17 +25,17 @@ public class BookingService {
             throws InsufficientPrivilegesException, BookingNotFoundException {
         Optional<BookingEntity> existingBooking = bookingRepository.findById(bookingId);
 
-        if (existingBooking.isPresent()) {
-            BookingEntity booking = existingBooking.get();
-
-            if (booking.getBooker() != requester && requester.getRole() != Role.ADMIN) {
-                throw new InsufficientPrivilegesException();
-            }
-
-            return Optional.of(booking);
-        } else {
+        if (!existingBooking.isPresent()) {
             throw new BookingNotFoundException();
         }
+
+        BookingEntity booking = existingBooking.get();
+
+        if (booking.getBooker() != requester && requester.getRole() != Role.ADMIN) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return Optional.of(booking);
     }
 
     public Optional<BookingEntity> addBooking(AccountEntity requester, BookingEntity newBooking)
