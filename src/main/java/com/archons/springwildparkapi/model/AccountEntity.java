@@ -80,6 +80,9 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "payor")
     private List<PaymentEntity> payments;
 
+    @Column(name = "is_enabled")
+    private boolean enabled;
+
     public AccountEntity() {
     }
 
@@ -87,7 +90,7 @@ public class AccountEntity implements UserDetails {
             boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
             String country, int zipCode, Role role, List<VehicleEntity> vehicles,
             List<OrganizationAccountEntity> organizationAccounts, List<BookingEntity> bookings,
-            List<PaymentEntity> payments) {
+            List<PaymentEntity> payments, boolean enabled) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -107,6 +110,7 @@ public class AccountEntity implements UserDetails {
         this.organizationAccounts = organizationAccounts;
         this.bookings = bookings;
         this.payments = payments;
+        this.enabled = enabled;
     }
 
     public int getId() {
@@ -261,6 +265,14 @@ public class AccountEntity implements UserDetails {
         this.payments = payments;
     }
 
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -283,7 +295,7 @@ public class AccountEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     @Override
@@ -314,6 +326,7 @@ public class AccountEntity implements UserDetails {
         result = prime * result + ((organizationAccounts == null) ? 0 : organizationAccounts.hashCode());
         result = prime * result + ((bookings == null) ? 0 : bookings.hashCode());
         result = prime * result + ((payments == null) ? 0 : payments.hashCode());
+        result = prime * result + (enabled ? 1231 : 1237);
         return result;
     }
 
@@ -408,6 +421,8 @@ public class AccountEntity implements UserDetails {
             if (other.payments != null)
                 return false;
         } else if (!payments.equals(other.payments))
+            return false;
+        if (enabled != other.enabled)
             return false;
         return true;
     }
