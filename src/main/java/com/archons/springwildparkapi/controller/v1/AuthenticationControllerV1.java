@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.AuthenticationResponse;
+import com.archons.springwildparkapi.dto.DuplicateEntityException;
 import com.archons.springwildparkapi.dto.RegisterRequest;
+import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.service.AuthenticationService;
 
 @RestController
@@ -31,12 +33,20 @@ public class AuthenticationControllerV1 {
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        try {
+            return ResponseEntity.ok(authService.register(request));
+        } catch (DuplicateEntityException ex) {
+            return ResponseEntity.status(409).build();
+        }
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
-        return ResponseEntity.ok(authService.authenticate(request));
+        try {
+            return ResponseEntity.ok(authService.authenticate(request));
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
