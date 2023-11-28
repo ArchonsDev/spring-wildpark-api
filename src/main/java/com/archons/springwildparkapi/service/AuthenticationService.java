@@ -11,9 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.archons.springwildparkapi.dto.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.AuthenticationResponse;
-import com.archons.springwildparkapi.dto.DuplicateEntityException;
 import com.archons.springwildparkapi.dto.RegisterRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
+import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.AccountRepository;
