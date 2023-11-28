@@ -89,7 +89,7 @@ public class AccountControllerV1 {
 
     @GetMapping("/{accountId}/vehicles")
     public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestParam int requesterId,
-            @RequestParam int accountId) {
+            @PathVariable int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountVehicles(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
@@ -101,7 +101,7 @@ public class AccountControllerV1 {
 
     @GetMapping("/{accountId}/organizations")
     public ResponseEntity<List<OrganizationEntity>> getAccountOrganizations(@RequestParam int requesterId,
-            @RequestParam int accountId) {
+            @PathVariable int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountOrganizations(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
@@ -113,7 +113,7 @@ public class AccountControllerV1 {
 
     @GetMapping("/{accountId}/bookings")
     public ResponseEntity<List<BookingEntity>> getAccountBookings(@RequestParam int requesterId,
-            @RequestParam int accountId) {
+            @PathVariable int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountBookings(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
@@ -125,7 +125,7 @@ public class AccountControllerV1 {
 
     @GetMapping("/{accountId}/payments")
     public ResponseEntity<List<PaymentEntity>> getAccountPayments(@RequestParam int requesterId,
-            @RequestParam int accountId) {
+            @PathVariable int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountPayments(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
