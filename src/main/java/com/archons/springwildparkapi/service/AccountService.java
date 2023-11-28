@@ -3,7 +3,6 @@ package com.archons.springwildparkapi.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,6 @@ import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
-import com.archons.springwildparkapi.model.OrganizationAccountEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.Role;
@@ -221,9 +219,8 @@ public class AccountService {
             throw new AccountNotFoundException();
         }
 
-        return existingAccount.get().getOrganizationAccounts().stream()
-                .map(OrganizationAccountEntity::getOrganization)
-                .collect(Collectors.toList());
+        AccountEntity account = existingAccount.get();
+        return account.getMemberOrganizations();
     }
 
     public List<BookingEntity> getAccountBookings(int requesterId, int accountId)

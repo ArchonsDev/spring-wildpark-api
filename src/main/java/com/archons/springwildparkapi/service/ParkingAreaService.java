@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
-import com.archons.springwildparkapi.model.OrganizationRole;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.ParkingAreaRepository;
@@ -16,13 +15,12 @@ import com.archons.springwildparkapi.repository.ParkingAreaRepository;
 @Service
 public class ParkingAreaService {
     private final ParkingAreaRepository parkingAreaRepository;
-    private final OrganizationAccountService organizationAccountService;
+    private final OrganizationService organizationService;
 
     @Autowired
-    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository,
-            OrganizationAccountService organizationAccountService) {
+    public ParkingAreaService(ParkingAreaRepository parkingAreaRepository, OrganizationService organizationService) {
         this.parkingAreaRepository = parkingAreaRepository;
-        this.organizationAccountService = organizationAccountService;
+        this.organizationService = organizationService;
     }
 
     public Optional<ParkingAreaEntity> getParkingAreaById(AccountEntity requester, int parkingAreaid)
@@ -35,7 +33,7 @@ public class ParkingAreaService {
 
         ParkingAreaEntity parkingArea = existingParkingArea.get();
 
-        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
+        if (!organizationService.isOrganizationMember(parkingArea.getOrganization(), requester)
                 && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
@@ -53,9 +51,9 @@ public class ParkingAreaService {
 
         ParkingAreaEntity parkingArea = existingParkingArea.get();
 
-        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
-                && requester.getRole() != Role.ADMIN && organizationAccountService.getOrganizationRole(requester,
-                        parkingArea.getOrganization()) != OrganizationRole.ADMIN) {
+        if (!organizationService.isOrganizationOwner(parkingArea.getOrganization(), requester) &&
+                !organizationService.isOrganizationAdmin(parkingArea.getOrganization(), requester) &&
+                requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
@@ -72,9 +70,9 @@ public class ParkingAreaService {
 
         ParkingAreaEntity parkingArea = existingParkingArea.get();
 
-        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
-                && requester.getRole() != Role.ADMIN && organizationAccountService.getOrganizationRole(requester,
-                        parkingArea.getOrganization()) != OrganizationRole.ADMIN) {
+        if (!organizationService.isOrganizationOwner(parkingArea.getOrganization(), requester) &&
+                !organizationService.isOrganizationAdmin(parkingArea.getOrganization(), requester) &&
+                requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
@@ -84,8 +82,9 @@ public class ParkingAreaService {
 
     public Optional<ParkingAreaEntity> addParkingArea(AccountEntity requester, ParkingAreaEntity parkingArea)
             throws InsufficientPrivilegesException {
-        if (!organizationAccountService.isOrganizationInAccount(requester, parkingArea.getOrganization())
-                && requester.getRole() != Role.ADMIN) {
+        if (!organizationService.isOrganizationOwner(parkingArea.getOrganization(), requester) &&
+                !organizationService.isOrganizationAdmin(parkingArea.getOrganization(), requester) &&
+                requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
