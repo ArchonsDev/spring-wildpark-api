@@ -1,7 +1,5 @@
 package com.archons.springwildparkapi.controller.v1;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,8 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.UpdateBookingRequest;
@@ -43,57 +41,61 @@ public class BookingControllerV1 {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Optional<BookingEntity>> addBooking(@RequestParam int requesterId,
+    public ResponseEntity<?> addBooking(
+            @RequestHeader(name = "Authorization") String authorization,
             @RequestBody BookingEntity newBooking) {
         try {
-            return ResponseEntity.ok(bookingService.addBooking(requesterId, newBooking));
+            return ResponseEntity.ok(bookingService.addBooking(authorization, newBooking));
         } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
         } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Optional<BookingEntity>> getBookingById(@RequestParam int requesterId,
+    public ResponseEntity<?> getBookingById(
+            @RequestHeader(name = "Authorization") String authorization,
             @PathVariable int bookingId) {
         try {
-            return ResponseEntity.ok(bookingService.getBookingById(requesterId, bookingId));
+            return ResponseEntity.ok(bookingService.getBookingById(authorization, bookingId));
         } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
         } catch (BookingNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
         } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<Optional<BookingEntity>> updateBooking(@RequestBody UpdateBookingRequest bookingUpdateRequest,
+    public ResponseEntity<?> updateBooking(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody UpdateBookingRequest request,
             @PathVariable int bookingId) {
         try {
-            return ResponseEntity.ok(bookingService.updateBooking(bookingUpdateRequest, bookingId));
+            return ResponseEntity.ok(bookingService.updateBooking(authorization, request, bookingId));
         } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
         } catch (BookingNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
         } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
     }
 
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<Void> deleteBooking(@RequestParam int requesterId,
+    public ResponseEntity<?> deleteBooking(
+            @RequestHeader(name = "Authorization") String authorization,
             @PathVariable int bookingId) {
         try {
-            bookingService.deleteBooking(requesterId, bookingId);
+            bookingService.deleteBooking(authorization, bookingId);
             return ResponseEntity.ok().build();
         } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
         } catch (BookingNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
         } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
     }
 }
