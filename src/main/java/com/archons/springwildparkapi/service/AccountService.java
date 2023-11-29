@@ -23,22 +23,30 @@ import com.archons.springwildparkapi.repository.AccountRepository;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Autowired
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.accountRepository = accountRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
-    public List<AccountEntity> getAllAccounts(int requesterId)
-            throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
+    public AccountEntity getAccountFromToken(String authorization) throws AccountNotFoundException {
+        String token = jwtService.extractBearerToken(authorization);
+        String email = jwtService.extractUsername(token);
+        Optional<AccountEntity> existingAccount = accountRepository.findByEmail(email);
 
-        if (!existingRequester.isPresent()) {
+        if (!existingAccount.isPresent()) {
             throw new AccountNotFoundException();
         }
 
-        AccountEntity requester = existingRequester.get();
+        return existingAccount.get();
+    }
+
+    public List<AccountEntity> getAllAccounts(String authorization)
+            throws InsufficientPrivilegesException, AccountNotFoundException {
+        AccountEntity requester = getAccountFromToken(authorization);
 
         // Checks if the requester is an admin
         if (requester.getRole() != Role.ADMIN) {
@@ -47,19 +55,18 @@ public class AccountService {
 
         Iterable<AccountEntity> iterable = accountRepository.findAll();
         List<AccountEntity> userList = new ArrayList<>();
-        iterable.forEach(userList::add);
+
+        for (AccountEntity a : iterable) {
+            if (a.getEnabled())
+                userList.add(a);
+        }
+
         return userList;
     }
 
-    public Optional<AccountEntity> getAccountById(int requesterId, int accountId)
+    public AccountEntity getAccountById(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
@@ -71,34 +78,21 @@ public class AccountService {
             throw new AccountNotFoundException();
         }
 
-        return Optional.of(existingAccount.get());
+        return existingAccount.get();
     }
 
-    public Optional<AccountEntity> updateAccount(UpdateAccountRequest accountUpdateRequest, int accountId)
+    public AccountEntity updateAccount(String authorization, UpdateAccountRequest request, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(accountUpdateRequest.getRequesterId());
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
-        AccountEntity updatedAccount = accountUpdateRequest.getUpdatedAccount();
+        AccountEntity requester = getAccountFromToken(authorization);
+        AccountEntity updatedAccount = request.getUpdatedAccount();
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(accountUpdateRequest.getRequesterId(), accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity account = existingAccount.get();
+        AccountEntity account = getAccountById(authorization, accountId);
 
         // Updateable fields:
-
         if (updatedAccount.getPassword() != null) {
             account.setPassword(passwordEncoder.encode(updatedAccount.getPassword()));
         }
@@ -147,79 +141,43 @@ public class AccountService {
             account.setRole(updatedAccount.getRole());
         }
 
-        return Optional.of(accountRepository.save(account));
+        return accountRepository.save(account);
     }
 
-    public boolean deleteAccount(int requesterId, int accountId)
+    public boolean deleteAccount(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(requesterId, accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity account = existingAccount.get();
+        AccountEntity account = getAccountById(authorization, accountId);
         account.setEnabled(false);
         accountRepository.save(account);
         return true;
     }
 
-    public List<VehicleEntity> getAccountVehicles(int requesterId, int accountId)
+    public List<VehicleEntity> getAccountVehicles(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(requesterId, accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        return existingAccount.get().getVehicles();
+        return getAccountById(authorization, accountId).getVehicles();
     }
 
-    public AccountOrganizationsResponse getAccountOrganizations(int requesterId, int accountId)
+    public AccountOrganizationsResponse getAccountOrganizations(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(requesterId, accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity account = existingAccount.get();
+        AccountEntity account = getAccountById(authorization, accountId);
 
         AccountOrganizationsResponse response = new AccountOrganizationsResponse();
         response.setOwnedOrganizations(account.getOwnedOrganizations());
@@ -229,49 +187,25 @@ public class AccountService {
         return response;
     }
 
-    public List<BookingEntity> getAccountBookings(int requesterId, int accountId)
+    public List<BookingEntity> getAccountBookings(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(requesterId, accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        return existingAccount.get().getBookings();
+        return getAccountById(authorization, accountId).getBookings();
     }
 
-    public List<PaymentEntity> getAccountPayments(int requesterId, int accountId)
+    public List<PaymentEntity> getAccountPayments(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = getAccountFromToken(authorization);
 
         if (requester.getId() != accountId && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<AccountEntity> existingAccount = getAccountById(requesterId, accountId);
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        return existingAccount.get().getPayments();
+        return getAccountById(authorization, accountId).getPayments();
     }
 }
