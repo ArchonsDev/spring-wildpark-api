@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.archons.springwildparkapi.dto.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.AuthenticationResponse;
-import com.archons.springwildparkapi.dto.RegisterRequest;
+import com.archons.springwildparkapi.dto.RegisterAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.model.AccountEntity;
@@ -34,7 +34,7 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthenticationResponse register(RegisterRequest request) throws DuplicateEntityException {
+    public AuthenticationResponse register(RegisterAccountRequest request) throws DuplicateEntityException {
         // Creates a new user and returns a JWT Token
         Optional<AccountEntity> existingAccount = accountRepository.findByEmail(request.getEmail());
 

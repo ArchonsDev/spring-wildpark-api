@@ -2,14 +2,14 @@ package com.archons.springwildparkapi.dto;
 
 import com.archons.springwildparkapi.model.AccountEntity;
 
-public class AccountUpdateRequest {
+public class UpdateAccountRequest {
     private int requesterId;
     private AccountEntity updatedAccount;
 
-    public AccountUpdateRequest() {
+    public UpdateAccountRequest() {
     }
 
-    public AccountUpdateRequest(int requesterId, AccountEntity updatedAccount) {
+    public UpdateAccountRequest(int requesterId, AccountEntity updatedAccount) {
         this.requesterId = requesterId;
         this.updatedAccount = updatedAccount;
     }

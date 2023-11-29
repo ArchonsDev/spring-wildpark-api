@@ -1,6 +1,6 @@
 package com.archons.springwildparkapi.dto;
 
-public class RegisterRequest {
+public class RegisterAccountRequest {
     private String firstname;
 
     private String lastname;
@@ -9,7 +9,7 @@ public class RegisterRequest {
 
     private String password;
 
-    public RegisterRequest(String firstname, String lastname, String email, String password) {
+    public RegisterAccountRequest(String firstname, String lastname, String email, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;

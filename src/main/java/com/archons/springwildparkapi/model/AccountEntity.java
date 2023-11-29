@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,11 +17,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tblaccount")
+@JsonIgnoreProperties({ "ownedOrganizations", "adminOrganizations", "memberOrganizations", "vehicles", "bookings",
+        "payments" })
 public class AccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,8 +76,14 @@ public class AccountEntity implements UserDetails {
     @OneToMany(mappedBy = "owner")
     private List<VehicleEntity> vehicles;
 
-    @OneToMany(mappedBy = "account")
-    private List<OrganizationAccountEntity> organizationAccounts;
+    @OneToMany(mappedBy = "owner")
+    private List<OrganizationEntity> ownedOrganizations;
+
+    @ManyToMany(mappedBy = "admins")
+    private List<OrganizationEntity> adminOrganizations;
+
+    @ManyToMany(mappedBy = "members")
+    private List<OrganizationEntity> memberOrganizations;
 
     @OneToMany(mappedBy = "booker")
     private List<BookingEntity> bookings;
@@ -89,7 +100,8 @@ public class AccountEntity implements UserDetails {
     public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
             boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
             String country, int zipCode, Role role, List<VehicleEntity> vehicles,
-            List<OrganizationAccountEntity> organizationAccounts, List<BookingEntity> bookings,
+            List<OrganizationEntity> ownedOrganizations, List<OrganizationEntity> adminorganizations,
+            List<OrganizationEntity> memberOrganizations, List<BookingEntity> bookings,
             List<PaymentEntity> payments, boolean enabled) {
         this.id = id;
         this.email = email;
@@ -107,7 +119,9 @@ public class AccountEntity implements UserDetails {
         this.zipCode = zipCode;
         this.role = role;
         this.vehicles = vehicles;
-        this.organizationAccounts = organizationAccounts;
+        this.ownedOrganizations = ownedOrganizations;
+        this.adminOrganizations = adminorganizations;
+        this.memberOrganizations = memberOrganizations;
         this.bookings = bookings;
         this.payments = payments;
         this.enabled = enabled;
@@ -241,12 +255,28 @@ public class AccountEntity implements UserDetails {
         this.vehicles = vehicles;
     }
 
-    public List<OrganizationAccountEntity> getOrganizationAccounts() {
-        return organizationAccounts;
+    public List<OrganizationEntity> getOwnedOrganizations() {
+        return ownedOrganizations;
     }
 
-    public void setOrganizationAccounts(List<OrganizationAccountEntity> organizationAccounts) {
-        this.organizationAccounts = organizationAccounts;
+    public void setOwnedOrganizations(List<OrganizationEntity> ownedOrganizations) {
+        this.ownedOrganizations = ownedOrganizations;
+    }
+
+    public List<OrganizationEntity> getAdminOrganizations() {
+        return adminOrganizations;
+    }
+
+    public void setAdminOrganizations(List<OrganizationEntity> adminOrganizations) {
+        this.adminOrganizations = adminOrganizations;
+    }
+
+    public List<OrganizationEntity> getMemberOrganizations() {
+        return memberOrganizations;
+    }
+
+    public void setMemberOrganizations(List<OrganizationEntity> memberOrganizations) {
+        this.memberOrganizations = memberOrganizations;
     }
 
     public List<BookingEntity> getBookings() {
@@ -323,7 +353,9 @@ public class AccountEntity implements UserDetails {
         result = prime * result + zipCode;
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + ((vehicles == null) ? 0 : vehicles.hashCode());
-        result = prime * result + ((organizationAccounts == null) ? 0 : organizationAccounts.hashCode());
+        result = prime * result + ((ownedOrganizations == null) ? 0 : ownedOrganizations.hashCode());
+        result = prime * result + ((adminOrganizations == null) ? 0 : adminOrganizations.hashCode());
+        result = prime * result + ((memberOrganizations == null) ? 0 : memberOrganizations.hashCode());
         result = prime * result + ((bookings == null) ? 0 : bookings.hashCode());
         result = prime * result + ((payments == null) ? 0 : payments.hashCode());
         result = prime * result + (enabled ? 1231 : 1237);
@@ -407,10 +439,20 @@ public class AccountEntity implements UserDetails {
                 return false;
         } else if (!vehicles.equals(other.vehicles))
             return false;
-        if (organizationAccounts == null) {
-            if (other.organizationAccounts != null)
+        if (ownedOrganizations == null) {
+            if (other.ownedOrganizations != null)
                 return false;
-        } else if (!organizationAccounts.equals(other.organizationAccounts))
+        } else if (!ownedOrganizations.equals(other.ownedOrganizations))
+            return false;
+        if (adminOrganizations == null) {
+            if (other.adminOrganizations != null)
+                return false;
+        } else if (!adminOrganizations.equals(other.adminOrganizations))
+            return false;
+        if (memberOrganizations == null) {
+            if (other.memberOrganizations != null)
+                return false;
+        } else if (!memberOrganizations.equals(other.memberOrganizations))
             return false;
         if (bookings == null) {
             if (other.bookings != null)

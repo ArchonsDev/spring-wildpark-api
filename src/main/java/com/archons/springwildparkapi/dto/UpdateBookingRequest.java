@@ -2,16 +2,16 @@ package com.archons.springwildparkapi.dto;
 
 import com.archons.springwildparkapi.model.BookingEntity;
 
-public class BookingUpdateRequest {
+public class UpdateBookingRequest {
     private int requesterId;
     private BookingEntity updatedBooking;
 
-    public BookingUpdateRequest(int requesterId, BookingEntity updatedBooking) {
+    public UpdateBookingRequest(int requesterId, BookingEntity updatedBooking) {
         this.requesterId = requesterId;
         this.updatedBooking = updatedBooking;
     }
 
-    public BookingUpdateRequest() {
+    public UpdateBookingRequest() {
     }
 
     public int getRequesterId() {

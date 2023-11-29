@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AccountUpdateRequest;
+import com.archons.springwildparkapi.dto.AccountOrganizationsResponse;
+import com.archons.springwildparkapi.dto.UpdateAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
-import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.service.AccountService;
@@ -75,7 +75,7 @@ public class AccountControllerV1 {
 
     @PutMapping("/{accountId}")
     public ResponseEntity<Optional<AccountEntity>> updateAccount(
-            @RequestBody AccountUpdateRequest accountUpdateRequest,
+            @RequestBody UpdateAccountRequest accountUpdateRequest,
             @PathVariable int accountId) {
         /* Updates an account */
         try {
@@ -100,7 +100,7 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/{accountId}/organizations")
-    public ResponseEntity<List<OrganizationEntity>> getAccountOrganizations(@RequestParam int requesterId,
+    public ResponseEntity<AccountOrganizationsResponse> getAccountOrganizations(@RequestParam int requesterId,
             @PathVariable int accountId) {
         try {
             return ResponseEntity.ok(accountService.getAccountOrganizations(requesterId, accountId));

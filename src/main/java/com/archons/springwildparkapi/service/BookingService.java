@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.BookingUpdateRequest;
+import com.archons.springwildparkapi.dto.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
@@ -66,7 +66,7 @@ public class BookingService {
         return Optional.of(bookingRepository.save(newBooking));
     }
 
-    public Optional<BookingEntity> updateBooking(BookingUpdateRequest bookingUpdateRequest, int bookingId)
+    public Optional<BookingEntity> updateBooking(UpdateBookingRequest bookingUpdateRequest, int bookingId)
             throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
         Optional<AccountEntity> existingRequester = accountService.getAccountById(bookingUpdateRequest.getRequesterId(),
                 bookingUpdateRequest.getRequesterId());
