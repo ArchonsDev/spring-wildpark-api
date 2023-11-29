@@ -45,11 +45,14 @@ public class BookingEntity {
     @JoinColumn(name = "booker_id")
     private AccountEntity booker;
 
+    @Column(name = "is_deleted")
+    private boolean deleted;
+
     public BookingEntity() {
     }
 
     public BookingEntity(int id, VehicleEntity vehicle, Date date, float duration, OrganizationEntity organization,
-            ParkingAreaEntity area, PaymentEntity payment, AccountEntity booker) {
+            ParkingAreaEntity area, PaymentEntity payment, AccountEntity booker, boolean deleted) {
         this.id = id;
         this.vehicle = vehicle;
         this.date = date;
@@ -58,6 +61,7 @@ public class BookingEntity {
         this.area = area;
         this.payment = payment;
         this.booker = booker;
+        this.deleted = deleted;
     }
 
     public int getId() {
@@ -122,6 +126,14 @@ public class BookingEntity {
 
     public void setBooker(AccountEntity booker) {
         this.booker = booker;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

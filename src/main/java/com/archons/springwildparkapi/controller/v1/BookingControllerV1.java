@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.archons.springwildparkapi.dto.UpdateBookingRequest;
+import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.service.BookingService;
 
@@ -27,10 +29,10 @@ public class BookingControllerV1 {
      * This controller class handles all booking related requests
      * 
      * Endpoints:
-     * POST /api/v1/bookings/
-     * GET /api/v1/bookings/{bookingId}
+     * POST /api/v1/bookings?requesterId=
+     * GET /api/v1/bookings/{bookingId}?requesterId=
      * PUT /api/v1/bookings/{bookingId}
-     * DELETE /api/v1/bookings/{bookingId}
+     * DELETE /api/v1/bookings/{bookingId}?requesterId=
      * 
      */
     private BookingService bookingService;
@@ -41,48 +43,56 @@ public class BookingControllerV1 {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Optional<BookingEntity>> addBooking(@RequestBody AccountEntity requester,
+    public ResponseEntity<Optional<BookingEntity>> addBooking(@RequestParam int requesterId,
             @RequestBody BookingEntity newBooking) {
         try {
-            return ResponseEntity.ok(bookingService.addBooking(requester, newBooking));
+            return ResponseEntity.ok(bookingService.addBooking(requesterId, newBooking));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Optional<BookingEntity>> getBookingById(@RequestBody AccountEntity requester,
-            @RequestParam int bookingId) {
+    public ResponseEntity<Optional<BookingEntity>> getBookingById(@RequestParam int requesterId,
+            @PathVariable int bookingId) {
         try {
-            return ResponseEntity.ok(bookingService.getBookingById(requester, bookingId));
+            return ResponseEntity.ok(bookingService.getBookingById(requesterId, bookingId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<Optional<BookingEntity>> updateBooking(@RequestBody AccountEntity requester,
-            @RequestBody BookingEntity updatedBooking, @RequestParam int bookingId) {
+    public ResponseEntity<Optional<BookingEntity>> updateBooking(@RequestBody UpdateBookingRequest bookingUpdateRequest,
+            @PathVariable int bookingId) {
         try {
-            return ResponseEntity.ok(bookingService.updateBooking(requester, updatedBooking, bookingId));
+            return ResponseEntity.ok(bookingService.updateBooking(bookingUpdateRequest, bookingId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<Void> deleteBooking(@RequestBody AccountEntity requester,
-            @RequestParam int bookingId) {
+    public ResponseEntity<Void> deleteBooking(@RequestParam int requesterId,
+            @PathVariable int bookingId) {
         try {
-            bookingService.deleteBooking(requester, bookingId);
+            bookingService.deleteBooking(requesterId, bookingId);
             return ResponseEntity.ok().build();
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (BookingNotFoundException ex) {
+            return ResponseEntity.notFound().build();
+        } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }

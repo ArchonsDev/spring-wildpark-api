@@ -1,6 +1,9 @@
 package com.archons.springwildparkapi.service;
 
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -8,7 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.archons.springwildparkapi.dto.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.AuthenticationResponse;
-import com.archons.springwildparkapi.dto.RegisterRequest;
+import com.archons.springwildparkapi.dto.RegisterAccountRequest;
+import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
+import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.AccountRepository;
@@ -29,8 +34,14 @@ public class AuthenticationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterAccountRequest request) throws DuplicateEntityException {
         // Creates a new user and returns a JWT Token
+        Optional<AccountEntity> existingAccount = accountRepository.findByEmail(request.getEmail());
+
+        if (existingAccount.isPresent()) {
+            throw new DuplicateEntityException();
+        }
+
         AccountEntity account = new AccountEntity();
 
         // Set fields
@@ -39,6 +50,7 @@ public class AuthenticationService {
         account.setEmail(request.getEmail());
         account.setPassword(passwordEncoder.encode(request.getPassword()));
         account.setRole(Role.USER);
+        account.setEnabled(true);
 
         // Save user
         account = accountRepository.save(account);
@@ -50,14 +62,19 @@ public class AuthenticationService {
         return new AuthenticationResponse(jwtToken, account);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws AccountNotFoundException {
+        // Find user from DB
+        Optional<AccountEntity> existingAccount = accountRepository.findByEmail(request.getEmail());
+
+        if (!existingAccount.isPresent()) {
+            throw new AccountNotFoundException();
+        }
+
         // Authenticate a user from the provided email and password
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
 
-        // Find user from DB
-        AccountEntity account = accountRepository.findByEmail(request.getEmail())
-                .orElseThrow();
+        AccountEntity account = existingAccount.get();
 
         // Generate JWT Token
         String jtwToken = jwtService.generateToken(account);

@@ -7,18 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AccountUpdateRequest;
+import com.archons.springwildparkapi.dto.AccountOrganizationsResponse;
+import com.archons.springwildparkapi.dto.UpdateAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
-import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.service.AccountService;
@@ -30,13 +31,13 @@ public class AccountControllerV1 {
      * This controller class handles all account related requests
      * 
      * Endpoints:
-     * GET /api/v1/accounts/
-     * GET /api/v1/accounts/{id}
+     * GET /api/v1/accounts/?requesterId=
+     * GET /api/v1/accounts/{id}?requesterId=
      * PUT /api/v1/accounts/{id}
-     * GET /api/v1/accounts/{id}/vehicles
-     * GET /api/v1/accounts/{id}/organizations
-     * GET /api/v1/accounts/{id}/bookings
-     * GET /api/v1/accounts/{id}/payments
+     * GET /api/v1/accounts/{id}/vehicles?requesterId=
+     * GET /api/v1/accounts/{id}/organizations?requesterId=
+     * GET /api/v1/accounts/{id}/bookings?requesterId=
+     * GET /api/v1/accounts/{id}/payments?requesterId=
      * 
      */
 
@@ -48,21 +49,23 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<AccountEntity>> getAllAccounts(@RequestBody AccountEntity requester) {
+    public ResponseEntity<List<AccountEntity>> getAllAccounts(@RequestParam int requesterId) {
         /* Retrieve list of all accounts */
         try {
-            return ResponseEntity.ok(accountService.getAllAccounts(requester));
+            return ResponseEntity.ok(accountService.getAllAccounts(requesterId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        } catch (AccountNotFoundException ex) {
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<Optional<AccountEntity>> getAccountById(@RequestBody AccountEntity requester,
-            @RequestParam int accountId) {
+    public ResponseEntity<Optional<AccountEntity>> getAccountById(@RequestParam int requesterId,
+            @PathVariable int accountId) {
         /* Retrieves the account with the specified id */
         try {
-            return ResponseEntity.ok(accountService.getAccountById(requester, accountId));
+            return ResponseEntity.ok(accountService.getAccountById(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
@@ -72,8 +75,8 @@ public class AccountControllerV1 {
 
     @PutMapping("/{accountId}")
     public ResponseEntity<Optional<AccountEntity>> updateAccount(
-            @RequestBody AccountUpdateRequest accountUpdateRequest,
-            @RequestParam int accountId) {
+            @RequestBody UpdateAccountRequest accountUpdateRequest,
+            @PathVariable int accountId) {
         /* Updates an account */
         try {
             return ResponseEntity.ok(accountService.updateAccount(accountUpdateRequest, accountId));
@@ -85,10 +88,10 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/{accountId}/vehicles")
-    public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestBody AccountEntity requester,
-            @RequestParam int accountId) {
+    public ResponseEntity<List<VehicleEntity>> getAllAccountVehicles(@RequestParam int requesterId,
+            @PathVariable int accountId) {
         try {
-            return ResponseEntity.ok(accountService.getAccountVehicles(requester, accountId));
+            return ResponseEntity.ok(accountService.getAccountVehicles(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
@@ -97,10 +100,10 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/{accountId}/organizations")
-    public ResponseEntity<List<OrganizationEntity>> getAccountOrganizations(@RequestBody AccountEntity requester,
-            @RequestParam int accountId) {
+    public ResponseEntity<AccountOrganizationsResponse> getAccountOrganizations(@RequestParam int requesterId,
+            @PathVariable int accountId) {
         try {
-            return ResponseEntity.ok(accountService.getAccountOrganizations(requester, accountId));
+            return ResponseEntity.ok(accountService.getAccountOrganizations(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
@@ -109,10 +112,10 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/{accountId}/bookings")
-    public ResponseEntity<List<BookingEntity>> getAccountBookings(@RequestBody AccountEntity requester,
-            @RequestParam int accountId) {
+    public ResponseEntity<List<BookingEntity>> getAccountBookings(@RequestParam int requesterId,
+            @PathVariable int accountId) {
         try {
-            return ResponseEntity.ok(accountService.getAccountBookings(requester, accountId));
+            return ResponseEntity.ok(accountService.getAccountBookings(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
@@ -121,10 +124,10 @@ public class AccountControllerV1 {
     }
 
     @GetMapping("/{accountId}/payments")
-    public ResponseEntity<List<PaymentEntity>> getAccountPayments(@RequestBody AccountEntity requester,
-            @RequestParam int accountId) {
+    public ResponseEntity<List<PaymentEntity>> getAccountPayments(@RequestParam int requesterId,
+            @PathVariable int accountId) {
         try {
-            return ResponseEntity.ok(accountService.getAccountPayments(requester, accountId));
+            return ResponseEntity.ok(accountService.getAccountPayments(requesterId, accountId));
         } catch (InsufficientPrivilegesException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } catch (AccountNotFoundException ex) {
