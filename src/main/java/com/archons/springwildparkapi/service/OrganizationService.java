@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.dto.AddOrganizationRequest;
-import com.archons.springwildparkapi.dto.OrganizationUpdateRequest;
+import com.archons.springwildparkapi.dto.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
@@ -91,6 +91,7 @@ public class OrganizationService {
             throw new IncompleteRequestException();
         }
 
+        newOrganization.setOwner(existingRequester.get());
         return Optional.of(organizationRepository.save(newOrganization));
     }
 
@@ -139,7 +140,7 @@ public class OrganizationService {
         return Optional.of(organization);
     }
 
-    public Optional<OrganizationEntity> updateOrganization(OrganizationUpdateRequest request)
+    public Optional<OrganizationEntity> updateOrganization(UpdateOrganizationRequest request)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
             IncompleteRequestException {
         Optional<AccountEntity> existingRequester = accountService.getAccountById(request.getRequesterId(),

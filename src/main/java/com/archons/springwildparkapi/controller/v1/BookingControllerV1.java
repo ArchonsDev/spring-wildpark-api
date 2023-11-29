@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.BookingUpdateRequest;
+import com.archons.springwildparkapi.dto.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
@@ -69,7 +69,7 @@ public class BookingControllerV1 {
     }
 
     @PutMapping("/{bookingId}")
-    public ResponseEntity<Optional<BookingEntity>> updateBooking(@RequestBody BookingUpdateRequest bookingUpdateRequest,
+    public ResponseEntity<Optional<BookingEntity>> updateBooking(@RequestBody UpdateBookingRequest bookingUpdateRequest,
             @PathVariable int bookingId) {
         try {
             return ResponseEntity.ok(bookingService.updateBooking(bookingUpdateRequest, bookingId));

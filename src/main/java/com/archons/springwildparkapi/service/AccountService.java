@@ -8,12 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.AccountUpdateRequest;
+import com.archons.springwildparkapi.dto.AccountOrganizationsResponse;
+import com.archons.springwildparkapi.dto.UpdateAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
-import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.VehicleEntity;
@@ -74,7 +74,7 @@ public class AccountService {
         return Optional.of(existingAccount.get());
     }
 
-    public Optional<AccountEntity> updateAccount(AccountUpdateRequest accountUpdateRequest, int accountId)
+    public Optional<AccountEntity> updateAccount(UpdateAccountRequest accountUpdateRequest, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
         Optional<AccountEntity> existingRequester = accountRepository.findById(accountUpdateRequest.getRequesterId());
 
@@ -199,7 +199,7 @@ public class AccountService {
         return existingAccount.get().getVehicles();
     }
 
-    public List<OrganizationEntity> getAccountOrganizations(int requesterId, int accountId)
+    public AccountOrganizationsResponse getAccountOrganizations(int requesterId, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
         Optional<AccountEntity> existingRequester = accountRepository.findById(requesterId);
 
@@ -220,7 +220,13 @@ public class AccountService {
         }
 
         AccountEntity account = existingAccount.get();
-        return account.getMemberOrganizations();
+
+        AccountOrganizationsResponse response = new AccountOrganizationsResponse();
+        response.setOwnedOrganizations(account.getOwnedOrganizations());
+        response.setAdminOrganizations(account.getAdminOrganizations());
+        response.setMemberOrganizations(account.getMemberOrganizations());
+
+        return response;
     }
 
     public List<BookingEntity> getAccountBookings(int requesterId, int accountId)

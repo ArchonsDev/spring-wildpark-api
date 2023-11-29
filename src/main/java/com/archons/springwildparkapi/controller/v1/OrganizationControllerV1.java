@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.AddOrganizationRequest;
-import com.archons.springwildparkapi.dto.OrganizationUpdateRequest;
+import com.archons.springwildparkapi.dto.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
@@ -88,7 +88,7 @@ public class OrganizationControllerV1 {
 
     @PutMapping("/{organizationId}")
     public ResponseEntity<Optional<OrganizationEntity>> updateOrganization(
-            @RequestBody OrganizationUpdateRequest request) {
+            @RequestBody UpdateOrganizationRequest request) {
         try {
             return ResponseEntity.ok(organizationService.updateOrganization(request));
         } catch (InsufficientPrivilegesException ex) {
