@@ -17,8 +17,14 @@ import com.archons.springwildparkapi.dto.AddBookingRequest;
 import com.archons.springwildparkapi.dto.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
+import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
+import com.archons.springwildparkapi.exceptions.MaxCapacityReachedException;
+import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
+import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
+import com.archons.springwildparkapi.exceptions.UnknownParkingAreaException;
+import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.service.BookingService;
 
 @RestController
@@ -49,8 +55,22 @@ public class BookingControllerV1 {
             return ResponseEntity.ok(bookingService.addBooking(authorization, request));
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+        } catch (VehicleNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
+        } catch (OrganizationNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
+        } catch (ParkingAreaNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
+        } catch (UnknownParkingAreaException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
         } catch (IncompleteRequestException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
+        } catch (InsufficientPrivilegesException ex) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
+        } catch (DuplicateEntityException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Vehicle already in another booking");
+        } catch (MaxCapacityReachedException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Parking area at max capacity");
         }
     }
 

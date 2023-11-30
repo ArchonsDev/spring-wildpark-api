@@ -41,6 +41,7 @@ public class AccountService extends BaseService {
     }
 
     public AccountEntity getAccountFromToken(String authorization) throws AccountNotFoundException {
+        // Get email from token
         String email = jwtService.extractUsername(jwtService.extractBearerToken(authorization));
 
         return accountRepository.findByEmail(email)
@@ -50,13 +51,12 @@ public class AccountService extends BaseService {
     public AuthenticationResponse register(RegisterAccountRequest request) throws DuplicateEntityException {
         // Creates a new user and returns a JWT Token
         Optional<AccountEntity> existingAccount = accountRepository.findByEmail(request.getEmail());
-
+        // Check uniqueness
         if (existingAccount.isPresent()) {
             throw new DuplicateEntityException();
         }
-
+        // Create instance
         AccountEntity account = new AccountEntity();
-
         // Set fields
         account.setFirstname(request.getFirstname());
         account.setLastname(request.getLastname());
@@ -64,50 +64,40 @@ public class AccountService extends BaseService {
         account.setPassword(encodePassword(request.getPassword()));
         account.setRole(Role.USER);
         account.setEnabled(true);
-
         // Save user
         account = accountRepository.save(account);
-
         // Create JWT Token
         String jwtToken = jwtService.generateToken(account);
-
+        // Mask password
         account.setPassword("REDACTED");
         return new AuthenticationResponse(jwtToken, account);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws AccountNotFoundException {
-        // Find user from DB
-        Optional<AccountEntity> existingAccount = accountRepository.findByEmail(request.getEmail());
-
-        if (!existingAccount.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
         // Authenticate a user from the provided email and password
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-
-        AccountEntity account = existingAccount.get();
-
+        // Retrieve account
+        AccountEntity account = accountRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AccountNotFoundException());
         // Generate JWT Token
         String jtwToken = jwtService.generateToken(account);
-
+        // Mask passowrd
         account.setPassword("REDACTED");
         return new AuthenticationResponse(jtwToken, account);
     }
 
     public List<AccountEntity> getAllAccounts(String authorization)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retrieve requester account
         AccountEntity requester = getAccountFromToken(authorization);
-
         // Checks if the requester is an admin
         if (!isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Filter enabled accounts
         Iterable<AccountEntity> iterable = accountRepository.findAll();
         List<AccountEntity> userList = new ArrayList<>();
-
         for (AccountEntity a : iterable) {
             if (a.getEnabled())
                 userList.add(a);
@@ -131,59 +121,48 @@ public class AccountService extends BaseService {
 
     public AccountEntity updateAccount(String authorization, UpdateAccountRequest request, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retrieve entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
         AccountEntity updatedAccount = request.getUpdatedAccount();
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
         // Updateable fields:
         if (updatedAccount.getPassword() != null) {
             account.setPassword(encodePassword(updatedAccount.getPassword()));
         }
-
         if (updatedAccount.getFirstname() != null) {
             account.setFirstname(updatedAccount.getFirstname());
         }
-
         if (updatedAccount.getLastname() != null) {
             account.setLastname(updatedAccount.getLastname());
         }
-
         if (updatedAccount.getBirthdate() != null) {
             account.setBirthdate(updatedAccount.getBirthdate());
         }
-
         if (updatedAccount.getContactNo() != null) {
             account.setContactNo(updatedAccount.getContactNo());
         }
-
         if (updatedAccount.getGender() != null) {
             account.setGender(updatedAccount.getGender());
         }
-
         if (updatedAccount.getStreet() != null) {
             account.setStreet(updatedAccount.getStreet());
         }
-
         if (updatedAccount.getMunicipality() != null) {
             account.setMunicipality(updatedAccount.getMunicipality());
         }
-
         if (updatedAccount.getProvince() != null) {
             account.setProvince(updatedAccount.getProvince());
         }
-
         if (updatedAccount.getCountry() != null) {
             account.setCountry(updatedAccount.getCountry());
         }
-
         if (updatedAccount.getZipCode() != 0) {
             account.setZipCode(updatedAccount.getZipCode());
         }
-
         if (updatedAccount.getRole() != null) {
             account.setRole(updatedAccount.getRole());
         }
@@ -193,22 +172,24 @@ public class AccountService extends BaseService {
 
     public void deleteAccount(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retreive entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Set disabled
         account.setEnabled(false);
         accountRepository.save(account);
     }
 
     public List<VehicleEntity> getAccountVehicles(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retrieve entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
@@ -218,13 +199,14 @@ public class AccountService extends BaseService {
 
     public AccountOrganizationsResponse getAccountOrganizations(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retrieve entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Build response
         AccountOrganizationsResponse response = new AccountOrganizationsResponse();
         response.setOwnedOrganizations(account.getOwnedOrganizations());
         response.setAdminOrganizations(account.getAdminOrganizations());
@@ -235,9 +217,10 @@ public class AccountService extends BaseService {
 
     public List<BookingEntity> getAccountBookings(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retreive entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
@@ -247,9 +230,10 @@ public class AccountService extends BaseService {
 
     public List<PaymentEntity> getAccountPayments(String authorization, int accountId)
             throws InsufficientPrivilegesException, AccountNotFoundException {
+        // Retrieve entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-
+        // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }

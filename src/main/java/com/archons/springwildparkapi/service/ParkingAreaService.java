@@ -55,19 +55,19 @@ public class ParkingAreaService extends BaseService {
     public ParkingAreaEntity updateParkingArea(String authorization, UpdateParkingAreaRequest request,
             int parkingId)
             throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        // Retreive entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         ParkingAreaEntity parkingArea = getParkingAreaById(parkingId);
         OrganizationEntity organization = parkingArea.getOrganization();
-
+        // Check permissions
         if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
                 && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Updateable fields
         if (request.getSlots() != 0) {
             parkingArea.setSlots(request.getSlots());
         }
-
         if (request.isDeleted() != parkingArea.isDeleted()) {
             parkingArea.setDeleted(request.isDeleted());
         }
@@ -77,28 +77,30 @@ public class ParkingAreaService extends BaseService {
 
     public void deleteParkingArea(String authorization, int parkingId)
             throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         ParkingAreaEntity parkingArea = getParkingAreaById(parkingId);
         OrganizationEntity organization = parkingArea.getOrganization();
-
+        // Check permissions
         if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
                 && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Set deleted
         parkingArea.setDeleted(true);
         parkingAreaRepository.save(parkingArea);
     }
 
     public ParkingAreaEntity addParkingArea(String authorization, AddParkingAreaRequest request)
             throws InsufficientPrivilegesException, AccountNotFoundException, OrganizationNotFoundException {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity organization = organizationService.getOrganizationById(request.getOrganizationId());
-
+        // Check permissions
         if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Build entitiy
         ParkingAreaEntity newParkingArea = new ParkingAreaEntity();
         newParkingArea.setOrganization(organization);
         newParkingArea.setSlots(request.getSlots());

@@ -1,5 +1,7 @@
 package com.archons.springwildparkapi.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,5 +61,11 @@ public class BaseService {
         }
 
         return false;
+    }
+
+    public LocalDateTime parseDateTime(String dateTimeString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        return LocalDateTime.parse(dateTimeString, formatter);
     }
 }

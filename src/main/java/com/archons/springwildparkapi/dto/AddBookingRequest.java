@@ -1,17 +1,15 @@
 package com.archons.springwildparkapi.dto;
 
-import java.util.Date;
-
 public class AddBookingRequest {
     private int vehicleId;
-    private Date date;
+    private String dateTime;
     private float duration;
     private int organizationId;
     private int parkingAreaId;
 
-    public AddBookingRequest(int vehicleId, Date date, float duration, int organizationId, int parkingAreaId) {
+    public AddBookingRequest(int vehicleId, String dateTime, float duration, int organizationId, int parkingAreaId) {
         this.vehicleId = vehicleId;
-        this.date = date;
+        this.dateTime = dateTime;
         this.duration = duration;
         this.organizationId = organizationId;
         this.parkingAreaId = parkingAreaId;
@@ -28,12 +26,12 @@ public class AddBookingRequest {
         this.vehicleId = vehicleId;
     }
 
-    public Date getDate() {
-        return date;
+    public String getdateTime() {
+        return dateTime;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setdateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public float getDuration() {

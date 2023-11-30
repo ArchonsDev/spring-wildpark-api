@@ -18,6 +18,7 @@ import com.archons.springwildparkapi.dto.UpdateVehicleRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
+import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.service.VehicleService;
@@ -91,6 +92,8 @@ public class VehicleControllerV1 {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         } catch (VehicleNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
+        } catch (ParkingAreaNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
         }
     }
 

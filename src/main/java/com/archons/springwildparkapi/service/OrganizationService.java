@@ -80,43 +80,40 @@ public class OrganizationService extends BaseService {
             int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
             IncompleteRequestException {
+        // Wrapper exception
         try {
+            // Retrieve entities
             AccountEntity requester = accountService.getAccountFromToken(authorization);
             OrganizationEntity organization = organizationRepository.findById(organizationId)
                     .orElseThrow(() -> new OrganizationNotFoundException());
-
+            // Check permissions
             if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
                     && !isAccountAdmin(requester)) {
                 throw new InsufficientPrivilegesException();
             }
-
+            // Update fields
             if (request.getName() != null) {
                 Optional<OrganizationEntity> existingOrganization = organizationRepository
                         .findByName(request.getName());
-
+                // Check uniqueness
                 if (existingOrganization.isPresent()) {
                     throw new DuplicateEntityException();
                 }
 
                 organization.setName(request.getName());
             }
-
             if (request.getLatitude() != 0) {
                 organization.setLatitude(request.getLatitude());
             }
-
             if (request.getLongitude() != 0) {
                 organization.setLongitude(request.getLongitude());
             }
-
             if (request.getPaymentStrategy() != null) {
                 organization.setPaymentStrategy(request.getPaymentStrategy());
             }
-
             if (request.getOrganizationType() != null) {
                 organization.setType(request.getOrganizationType());
             }
-
             if (request.isDeleted() != organization.getDeleted()) {
                 organization.setDeleted(request.isDeleted());
             }
@@ -129,15 +126,16 @@ public class OrganizationService extends BaseService {
 
     public void deleteOrganization(String authorization, int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException());
-
+        // Check permissions
         if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
                 && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Set deleted
         organization.setDeleted(true);
         organizationRepository.save(organization);
     }
