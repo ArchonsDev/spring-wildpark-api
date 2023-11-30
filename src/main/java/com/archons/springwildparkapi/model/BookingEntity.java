@@ -128,7 +128,7 @@ public class BookingEntity {
         this.booker = booker;
     }
 
-    public boolean getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 

@@ -2,6 +2,7 @@ package com.archons.springwildparkapi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.archons.springwildparkapi.repository.AccountRepository;
+import com.archons.springwildparkapi.service.BaseService;
 
 @Configuration
 public class ApplicationConfig {
@@ -45,5 +47,11 @@ public class ApplicationConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Conditional(PasswordEncoderCondition.class)
+    public BaseService baseService(PasswordEncoder passwordEncoder) {
+        return new BaseService(passwordEncoder);
     }
 }

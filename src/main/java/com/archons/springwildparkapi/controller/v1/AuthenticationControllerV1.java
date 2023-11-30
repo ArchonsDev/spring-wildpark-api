@@ -11,7 +11,7 @@ import com.archons.springwildparkapi.dto.AuthenticationResponse;
 import com.archons.springwildparkapi.dto.RegisterAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
-import com.archons.springwildparkapi.service.AuthenticationService;
+import com.archons.springwildparkapi.service.AccountService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -24,17 +24,17 @@ public class AuthenticationControllerV1 {
      * POST /api/v1/auth/authenticate
      * 
      */
-    private final AuthenticationService authService;
+    private final AccountService accountService;
 
-    public AuthenticationControllerV1(AuthenticationService authService) {
-        this.authService = authService;
+    public AuthenticationControllerV1(AccountService accountService) {
+        this.accountService = accountService;
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterAccountRequest request) {
         try {
-            return ResponseEntity.ok(authService.register(request));
+            return ResponseEntity.ok(accountService.register(request));
         } catch (DuplicateEntityException ex) {
             return ResponseEntity.status(409).build();
         }
@@ -44,7 +44,7 @@ public class AuthenticationControllerV1 {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request) {
         try {
-            return ResponseEntity.ok(authService.authenticate(request));
+            return ResponseEntity.ok(accountService.authenticate(request));
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }

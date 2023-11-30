@@ -13,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.archons.springwildparkapi.dto.AddBookingRequest;
 import com.archons.springwildparkapi.dto.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
+import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.service.BookingService;
 
 @RestController
@@ -43,13 +44,13 @@ public class BookingControllerV1 {
     @PostMapping("/")
     public ResponseEntity<?> addBooking(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody BookingEntity newBooking) {
+            @RequestBody AddBookingRequest request) {
         try {
-            return ResponseEntity.ok(bookingService.addBooking(authorization, newBooking));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
+            return ResponseEntity.ok(bookingService.addBooking(authorization, request));
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+        } catch (IncompleteRequestException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
         }
     }
 

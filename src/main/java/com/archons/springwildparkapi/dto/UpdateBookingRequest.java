@@ -1,22 +1,32 @@
 package com.archons.springwildparkapi.dto;
 
-import com.archons.springwildparkapi.model.BookingEntity;
+import com.archons.springwildparkapi.model.PaymentEntity;
 
 public class UpdateBookingRequest {
-    private BookingEntity updatedBooking;
-
-    public UpdateBookingRequest(BookingEntity updatedBooking) {
-        this.updatedBooking = updatedBooking;
-    }
+    private PaymentEntity payment;
+    private boolean deleted;
 
     public UpdateBookingRequest() {
     }
 
-    public BookingEntity getUpdatedBooking() {
-        return updatedBooking;
+    public UpdateBookingRequest(PaymentEntity payment, boolean deleted) {
+        this.payment = payment;
+        this.deleted = deleted;
     }
 
-    public void setUpdatedBooking(BookingEntity updatedBooking) {
-        this.updatedBooking = updatedBooking;
+    public PaymentEntity getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
