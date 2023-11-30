@@ -8,8 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,18 +25,23 @@ public class ParkingAreaEntity {
     @OneToMany(mappedBy = "parkingArea")
     private List<VehicleEntity> parkedVehicles;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "organization_id")
     private OrganizationEntity organization;
+
+    @Column(name = "is_deleted")
+    private boolean deleted;
 
     public ParkingAreaEntity() {
     }
 
-    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles, OrganizationEntity organization) {
+    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles, OrganizationEntity organization,
+            boolean deleted) {
         this.id = id;
         this.slots = slots;
         this.parkedVehicles = parkedVehicles;
         this.organization = organization;
+        this.deleted = deleted;
     }
 
     public int getId() {
@@ -71,6 +76,14 @@ public class ParkingAreaEntity {
         this.organization = organization;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -79,6 +92,7 @@ public class ParkingAreaEntity {
         result = prime * result + slots;
         result = prime * result + ((parkedVehicles == null) ? 0 : parkedVehicles.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
+        result = prime * result + (deleted ? 1231 : 1237);
         return result;
     }
 
@@ -104,6 +118,8 @@ public class ParkingAreaEntity {
             if (other.organization != null)
                 return false;
         } else if (!organization.equals(other.organization))
+            return false;
+        if (deleted != other.deleted)
             return false;
         return true;
     }

@@ -14,7 +14,6 @@ import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
-import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.repository.BookingRepository;
 
@@ -55,8 +54,8 @@ public class BookingService extends BaseService {
         try {
             VehicleEntity vehicle = vehicleService.getVehicleById(authorization, request.getVehicleId());
             OrganizationEntity organization = orgService.getOrganizationById(request.getOrganizationId());
-            // ParkingAreaEntity parkingArea =
-            // parkingService.getParkingAreaById(authorization, request.getParkingAreaId());
+            ParkingAreaEntity parkingArea = parkingService.getParkingAreaById(authorization,
+                    request.getParkingAreaId());
 
             BookingEntity newBooking = new BookingEntity();
 
@@ -65,11 +64,11 @@ public class BookingService extends BaseService {
             newBooking.setDuration(request.getDuration());
             newBooking.setOrganization(organization);
 
-            // if (!organization.equals(parkingArea.getOrganization())) {
-            // throw new UnknownParkingAreaException();
-            // }
+            if (!organization.equals(parkingArea.getOrganization())) {
+                throw new UnknownParkingAreaException();
+            }
 
-            // newBooking.setArea(parkingArea);
+            newBooking.setArea(parkingArea);
             newBooking.setBooker(requester);
 
             return bookingRepository.save(newBooking);

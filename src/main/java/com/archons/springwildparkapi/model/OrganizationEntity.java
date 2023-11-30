@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -49,6 +50,9 @@ public class OrganizationEntity {
     @JoinTable(name = "tblorganizationmember", joinColumns = @JoinColumn(name = "organization_id"), inverseJoinColumns = @JoinColumn(name = "account_id"))
     private List<AccountEntity> members;
 
+    @OneToMany(mappedBy = "organization")
+    private List<ParkingAreaEntity> parkingAreas;
+
     @Column(name = "is_deleted")
     private boolean deleted;
 
@@ -57,7 +61,7 @@ public class OrganizationEntity {
 
     public OrganizationEntity(int id, String name, double latitude, double longitude, PaymentStrategy paymentStrategy,
             OrganizationType type, AccountEntity owner, List<AccountEntity> admins, List<AccountEntity> members,
-            boolean deleted) {
+            List<ParkingAreaEntity> parkingAreas, boolean deleted) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
@@ -67,6 +71,7 @@ public class OrganizationEntity {
         this.owner = owner;
         this.admins = admins;
         this.members = members;
+        this.parkingAreas = parkingAreas;
         this.deleted = deleted;
     }
 
@@ -142,6 +147,14 @@ public class OrganizationEntity {
         this.members = members;
     }
 
+    public List<ParkingAreaEntity> getParkingAreas() {
+        return parkingAreas;
+    }
+
+    public void setParkingAreas(List<ParkingAreaEntity> parkingAreas) {
+        this.parkingAreas = parkingAreas;
+    }
+
     public boolean getDeleted() {
         return deleted;
     }
@@ -166,6 +179,7 @@ public class OrganizationEntity {
         result = prime * result + ((owner == null) ? 0 : owner.hashCode());
         result = prime * result + ((admins == null) ? 0 : admins.hashCode());
         result = prime * result + ((members == null) ? 0 : members.hashCode());
+        result = prime * result + ((parkingAreas == null) ? 0 : parkingAreas.hashCode());
         result = prime * result + (deleted ? 1231 : 1237);
         return result;
     }
@@ -208,6 +222,11 @@ public class OrganizationEntity {
             if (other.members != null)
                 return false;
         } else if (!members.equals(other.members))
+            return false;
+        if (parkingAreas == null) {
+            if (other.parkingAreas != null)
+                return false;
+        } else if (!parkingAreas.equals(other.parkingAreas))
             return false;
         if (deleted != other.deleted)
             return false;
