@@ -11,6 +11,7 @@ import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.ParkingAreaRepository;
@@ -36,10 +37,11 @@ public class ParkingAreaService {
             throws InsufficientPrivilegesException, AccountNotFoundException {
 
         AccountEntity requester = accountService.getAccountFromToken(authorization);
+        OrganizationEntity organization = newParkingArea.getOrganization();
 
         // Checks if requester is the owner or admin
-        if ((!organizationService.isOrganizationOwner(newParkingArea.getOrganization(), requester) &&
-                !organizationService.isOrganizationAdmin(newParkingArea.getOrganization(), requester)) &&
+        if ((!organizationService.isOrganizationOwner(organization, requester) &&
+                !organizationService.isOrganizationAdmin(organization, requester)) &&
                 requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
