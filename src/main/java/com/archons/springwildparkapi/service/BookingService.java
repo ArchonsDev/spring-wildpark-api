@@ -25,15 +25,9 @@ public class BookingService {
         this.accountService = accountService;
     }
 
-    public Optional<BookingEntity> getBookingById(int requesterId, int bookingId)
+    public BookingEntity getBookingById(String authorization, int bookingId)
             throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
         Optional<BookingEntity> existingBooking = bookingRepository.findById(bookingId);
 
         if (!existingBooking.isPresent()) {
@@ -46,49 +40,32 @@ public class BookingService {
             throw new InsufficientPrivilegesException();
         }
 
-        return Optional.of(booking);
+        return booking;
     }
 
-    public Optional<BookingEntity> addBooking(int requesterId, BookingEntity newBooking)
+    public BookingEntity addBooking(String authorization, BookingEntity newBooking)
             throws InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
 
         if (!requester.equals(newBooking.getBooker()) && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        return Optional.of(bookingRepository.save(newBooking));
+        newBooking.setBooker(requester);
+
+        return bookingRepository.save(newBooking);
     }
 
-    public Optional<BookingEntity> updateBooking(UpdateBookingRequest bookingUpdateRequest, int bookingId)
+    public BookingEntity updateBooking(String authorization, UpdateBookingRequest request, int bookingId)
             throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(bookingUpdateRequest.getRequesterId(),
-                bookingUpdateRequest.getRequesterId());
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
-        BookingEntity updatedBooking = bookingUpdateRequest.getUpdatedBooking();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        BookingEntity updatedBooking = request.getUpdatedBooking();
 
         if (!requester.equals(updatedBooking.getBooker()) && requester.getRole() != Role.ADMIN) {
             throw new InsufficientPrivilegesException();
         }
 
-        Optional<BookingEntity> existingBooking = getBookingById(bookingUpdateRequest.getRequesterId(), bookingId);
-
-        if (!existingBooking.isPresent()) {
-            throw new BookingNotFoundException();
-        }
-
-        BookingEntity booking = existingBooking.get();
+        BookingEntity booking = getBookingById(authorization, bookingId);
 
         if (updatedBooking.getVehicle() != null) {
             booking.setVehicle(updatedBooking.getVehicle());
@@ -98,18 +75,12 @@ public class BookingService {
             booking.setDeleted(updatedBooking.getDeleted());
         }
 
-        return Optional.of(bookingRepository.save(booking));
+        return bookingRepository.save(booking);
     }
 
-    public void deleteBooking(int requesterId, int bookingId)
+    public void deleteBooking(String authorization, int bookingId)
             throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
         Optional<BookingEntity> existingBooking = bookingRepository.findById(bookingId);
 
         if (!existingBooking.isPresent()) {

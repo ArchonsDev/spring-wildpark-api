@@ -26,6 +26,14 @@ public class JwtService {
         this.SECRET_KEY = SECRET_KEY;
     }
 
+    public String extractBearerToken(String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            return authorizationHeader.substring(7);
+        }
+
+        return null;
+    }
+
     public String extractUsername(String token) {
         // Extracts the email from the token
         return extractClaim(token, Claims::getSubject);

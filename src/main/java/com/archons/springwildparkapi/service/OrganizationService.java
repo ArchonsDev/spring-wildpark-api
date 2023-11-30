@@ -65,15 +65,10 @@ public class OrganizationService {
     }
 
     @Transactional
-    public Optional<OrganizationEntity> addOrganization(AddOrganizationRequest request)
+    public OrganizationEntity addOrganization(String authorization, AddOrganizationRequest request)
             throws InsufficientPrivilegesException, AccountNotFoundException, DuplicateEntityException,
             IncompleteRequestException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(request.getRequesterId(),
-                request.getRequesterId());
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
 
         OrganizationEntity newOrganization = request.getNewOrganization();
         Optional<OrganizationEntity> existingOrganization = organizationRepository
@@ -91,18 +86,11 @@ public class OrganizationService {
             throw new IncompleteRequestException();
         }
 
-        newOrganization.setOwner(existingRequester.get());
-        return Optional.of(organizationRepository.save(newOrganization));
+        newOrganization.setOwner(requester);
+        return organizationRepository.save(newOrganization);
     }
 
-    public List<OrganizationEntity> getAllOrganizations(int requesterId)
-            throws AccountNotFoundException, InsufficientPrivilegesException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
+    public List<OrganizationEntity> getAllOrganizations() {
         Iterable<OrganizationEntity> iterable = organizationRepository.findAll();
         List<OrganizationEntity> organizationList = new ArrayList<>();
 
@@ -115,15 +103,9 @@ public class OrganizationService {
         return organizationList;
     }
 
-    public Optional<OrganizationEntity> getOrganizationById(int requesterId, int organizationId)
+    public OrganizationEntity getOrganizationById(String authorization, int organizationId)
             throws OrganizationNotFoundException, InsufficientPrivilegesException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
         Optional<OrganizationEntity> existingOrganization = organizationRepository.findById(organizationId);
 
         if (!existingOrganization.isPresent()) {
@@ -137,34 +119,21 @@ public class OrganizationService {
             throw new InsufficientPrivilegesException();
         }
 
-        return Optional.of(organization);
+        return organization;
     }
 
-    public Optional<OrganizationEntity> updateOrganization(UpdateOrganizationRequest request)
+    public OrganizationEntity updateOrganization(String authorization, UpdateOrganizationRequest request,
+            int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
             IncompleteRequestException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(request.getRequesterId(),
-                request.getRequesterId());
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity updatedOrganization = request.getUpdatedOrganization();
 
         if (updatedOrganization.getId() == 0) {
             throw new IncompleteRequestException();
         }
 
-        Optional<OrganizationEntity> existingOrganization = getOrganizationById(request.getRequesterId(),
-                updatedOrganization.getId());
-
-        if (!existingOrganization.isPresent()) {
-            throw new OrganizationNotFoundException();
-        }
-
-        OrganizationEntity organization = existingOrganization.get();
+        OrganizationEntity organization = getOrganizationById(authorization, organizationId);
 
         if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
                 && requester.getRole() != Role.ADMIN) {
@@ -195,19 +164,12 @@ public class OrganizationService {
             organization.setDeleted(updatedOrganization.getDeleted());
         }
 
-        return Optional.of(organizationRepository.save(organization));
-
+        return organizationRepository.save(organization);
     }
 
-    public void deleteOrganization(int requesterId, int organizationId)
+    public void deleteOrganization(String authorization, int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
-        Optional<AccountEntity> existingRequester = accountService.getAccountById(requesterId, requesterId);
-
-        if (!existingRequester.isPresent()) {
-            throw new AccountNotFoundException();
-        }
-
-        AccountEntity requester = existingRequester.get();
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
         Optional<OrganizationEntity> existingOrganization = organizationRepository.findById(organizationId);
 
         if (!existingOrganization.isPresent()) {
