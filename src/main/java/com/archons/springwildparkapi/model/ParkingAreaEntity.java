@@ -29,6 +29,9 @@ public class ParkingAreaEntity {
     @JoinColumn(name = "organization_id")
     private OrganizationEntity organization;
 
+    @Column(name = "is_deleted")
+    private boolean deleted;
+
     public ParkingAreaEntity() {
     }
 
@@ -69,6 +72,14 @@ public class ParkingAreaEntity {
 
     public void setOrganization(OrganizationEntity organization) {
         this.organization = organization;
+    }
+
+    public boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override
