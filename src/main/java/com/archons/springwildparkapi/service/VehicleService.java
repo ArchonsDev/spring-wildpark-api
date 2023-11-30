@@ -7,8 +7,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.AddVehicleRequest;
-import com.archons.springwildparkapi.dto.UpdateVehicleRequest;
+import com.archons.springwildparkapi.dto.requests.AddVehicleRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateVehicleRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;

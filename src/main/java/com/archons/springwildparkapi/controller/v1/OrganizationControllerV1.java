@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AddOrganizationRequest;
-import com.archons.springwildparkapi.dto.UpdateOrganizationRequest;
+import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;

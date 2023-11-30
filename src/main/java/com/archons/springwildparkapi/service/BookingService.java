@@ -3,8 +3,8 @@ package com.archons.springwildparkapi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.AddBookingRequest;
-import com.archons.springwildparkapi.dto.UpdateBookingRequest;
+import com.archons.springwildparkapi.dto.requests.AddBookingRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;

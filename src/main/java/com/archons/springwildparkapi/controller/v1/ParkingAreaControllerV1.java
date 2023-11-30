@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AddParkingAreaRequest;
-import com.archons.springwildparkapi.dto.UpdateParkingAreaRequest;
+import com.archons.springwildparkapi.dto.requests.AddParkingAreaRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateParkingAreaRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;

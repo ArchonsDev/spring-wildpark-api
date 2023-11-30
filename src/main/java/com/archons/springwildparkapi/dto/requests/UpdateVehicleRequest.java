@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.dto;
+package com.archons.springwildparkapi.dto.requests;
 
 public class UpdateVehicleRequest {
     private String color;

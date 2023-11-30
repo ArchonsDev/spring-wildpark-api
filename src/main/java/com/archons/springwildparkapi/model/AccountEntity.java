@@ -1,7 +1,7 @@
 package com.archons.springwildparkapi.model;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +24,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tblaccount")
 @JsonIgnoreProperties({ "ownedOrganizations", "adminOrganizations", "memberOrganizations", "vehicles", "bookings",
-        "payments" })
+        "payments", "role", "enabled", "authorities", "username", "accountNonLocked", "accountNonExpired",
+        "credentialsNonExpired", "admin" })
 public class AccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,7 +44,7 @@ public class AccountEntity implements UserDetails {
     public String lastname;
 
     @Column(name = "birthdate")
-    public Date birthdate;
+    public LocalDateTime birthdate;
 
     @Column(name = "is_admin")
     public boolean isAdmin;
@@ -97,9 +98,9 @@ public class AccountEntity implements UserDetails {
     public AccountEntity() {
     }
 
-    public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
-            boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
-            String country, int zipCode, Role role, List<VehicleEntity> vehicles,
+    public AccountEntity(int id, String email, String password, String firstname, String lastname,
+            LocalDateTime birthdate, boolean isAdmin, String contactNo, String gender, String street,
+            String municipality, String province, String country, int zipCode, Role role, List<VehicleEntity> vehicles,
             List<OrganizationEntity> ownedOrganizations, List<OrganizationEntity> adminorganizations,
             List<OrganizationEntity> memberOrganizations, List<BookingEntity> bookings,
             List<PaymentEntity> payments, boolean enabled) {
@@ -167,11 +168,11 @@ public class AccountEntity implements UserDetails {
         this.lastname = lastname;
     }
 
-    public Date getBirthdate() {
+    public LocalDateTime getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(Date birthdate) {
+    public void setBirthdate(LocalDateTime birthdate) {
         this.birthdate = birthdate;
     }
 

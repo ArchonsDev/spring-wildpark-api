@@ -8,8 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
-import com.archons.springwildparkapi.dto.AddOrganizationRequest;
-import com.archons.springwildparkapi.dto.UpdateOrganizationRequest;
+import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;

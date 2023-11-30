@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.dto;
+package com.archons.springwildparkapi.dto.reesponses;
 
 import java.util.List;
 

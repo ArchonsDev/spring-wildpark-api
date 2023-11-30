@@ -1,4 +1,4 @@
-package com.archons.springwildparkapi.dto;
+package com.archons.springwildparkapi.dto.requests;
 
 import com.archons.springwildparkapi.model.PaymentEntity;
 

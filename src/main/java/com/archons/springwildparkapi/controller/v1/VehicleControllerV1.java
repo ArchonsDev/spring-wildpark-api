@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AddVehicleRequest;
-import com.archons.springwildparkapi.dto.UpdateVehicleRequest;
+import com.archons.springwildparkapi.dto.requests.AddVehicleRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateVehicleRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;

@@ -10,11 +10,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.AccountOrganizationsResponse;
-import com.archons.springwildparkapi.dto.AuthenticationRequest;
-import com.archons.springwildparkapi.dto.AuthenticationResponse;
-import com.archons.springwildparkapi.dto.RegisterAccountRequest;
-import com.archons.springwildparkapi.dto.UpdateAccountRequest;
+import com.archons.springwildparkapi.dto.reesponses.AccountOrganizationsResponse;
+import com.archons.springwildparkapi.dto.reesponses.AuthenticationResponse;
+import com.archons.springwildparkapi.dto.requests.AuthenticationRequest;
+import com.archons.springwildparkapi.dto.requests.RegisterAccountRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;

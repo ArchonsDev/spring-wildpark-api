@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.archons.springwildparkapi.dto.AddParkingAreaRequest;
-import com.archons.springwildparkapi.dto.UpdateParkingAreaRequest;
+import com.archons.springwildparkapi.dto.requests.AddParkingAreaRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateParkingAreaRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;

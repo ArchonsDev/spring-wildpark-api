@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.archons.springwildparkapi.dto.AddBookingRequest;
-import com.archons.springwildparkapi.dto.UpdateBookingRequest;
+import com.archons.springwildparkapi.dto.requests.AddBookingRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
