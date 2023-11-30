@@ -2,6 +2,8 @@ package com.archons.springwildparkapi.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tblparkingarea")
+@JsonIgnoreProperties({ "parkedVehicles", "organization" })
 public class ParkingAreaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

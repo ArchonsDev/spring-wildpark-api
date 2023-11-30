@@ -54,8 +54,7 @@ public class BookingService extends BaseService {
         try {
             VehicleEntity vehicle = vehicleService.getVehicleById(authorization, request.getVehicleId());
             OrganizationEntity organization = orgService.getOrganizationById(request.getOrganizationId());
-            ParkingAreaEntity parkingArea = parkingService.getParkingAreaById(authorization,
-                    request.getParkingAreaId());
+            ParkingAreaEntity parkingArea = parkingService.getParkingAreaById(request.getParkingAreaId());
 
             BookingEntity newBooking = new BookingEntity();
 

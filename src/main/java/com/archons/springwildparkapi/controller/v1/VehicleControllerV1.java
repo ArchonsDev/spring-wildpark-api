@@ -67,7 +67,7 @@ public class VehicleControllerV1 {
 
     @PostMapping("/")
     public ResponseEntity<?> addVehicle(@RequestHeader(name = "Authorization") String authorization,
-            AddVehicleRequest request) {
+            @RequestBody AddVehicleRequest request) {
         try {
             return ResponseEntity.ok(vehicleService.addVehicle(authorization, request));
         } catch (VehicleAlreadyExistsException ex) {

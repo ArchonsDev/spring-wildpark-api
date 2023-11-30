@@ -68,10 +68,9 @@ public class ParkingAreaControllerV1 {
     }
 
     @GetMapping("/{parkingId}")
-    public ResponseEntity<?> getParkingAreaById(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int parkingId) {
+    public ResponseEntity<?> getParkingAreaById(@PathVariable int parkingId) {
         try {
-            return ResponseEntity.ok(parkingAreaService.getParkingAreaById(authorization, parkingId));
+            return ResponseEntity.ok(parkingAreaService.getParkingAreaById(parkingId));
         } catch (AccountNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         } catch (InsufficientPrivilegesException ex) {
@@ -83,7 +82,7 @@ public class ParkingAreaControllerV1 {
 
     @PutMapping("/{parkingId}")
     public ResponseEntity<?> updateParkingArea(
-            @RequestHeader(name = "Authorization") String authorization, UpdateParkingAreaRequest request,
+            @RequestHeader(name = "Authorization") String authorization, @RequestBody UpdateParkingAreaRequest request,
             @PathVariable int parkingId) {
         try {
             return ResponseEntity.ok(parkingAreaService.updateParkingArea(authorization, request, parkingId));

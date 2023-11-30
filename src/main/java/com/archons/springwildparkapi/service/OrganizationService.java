@@ -85,7 +85,7 @@ public class OrganizationService extends BaseService {
             OrganizationEntity organization = organizationRepository.findById(organizationId)
                     .orElseThrow(() -> new OrganizationNotFoundException());
 
-            if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
+            if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
                     && !isAccountAdmin(requester)) {
                 throw new InsufficientPrivilegesException();
             }
@@ -133,7 +133,7 @@ public class OrganizationService extends BaseService {
         OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException());
 
-        if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
+        if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
                 && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }

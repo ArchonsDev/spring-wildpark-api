@@ -40,12 +40,14 @@ public class VehicleService extends BaseService {
                 request.getModel() == null ||
                 request.getPlateNumber() == null ||
                 request.getColor() == null) {
+            System.out.println("error in initial check");
             throw new IncompleteRequestException();
         }
 
         Optional<VehicleEntity> existingVehicle = vehicleRepository.findByPlateNumber(request.getPlateNumber());
 
         if (existingVehicle.isPresent()) {
+            System.out.println("error in uniqueness check");
             throw new VehicleAlreadyExistsException();
         }
 
@@ -53,6 +55,7 @@ public class VehicleService extends BaseService {
 
         if (request.getType() == VehicleType.TWO_WHEEL) {
             if (request.getDisplacement() == 0) {
+                System.out.println("error in displacement check");
                 throw new IncompleteRequestException();
             }
 
@@ -61,6 +64,7 @@ public class VehicleService extends BaseService {
             newVehicle = twoWheelVehicle;
         } else if (request.getType() == VehicleType.FOUR_WHEEL) {
             if (request.getSize() == null) {
+                System.out.println("error in size check");
                 throw new IncompleteRequestException();
             }
 
@@ -68,6 +72,7 @@ public class VehicleService extends BaseService {
             fourWheelVehicle.setType(request.getSize());
             newVehicle = fourWheelVehicle;
         } else {
+            System.out.println("error in type check");
             throw new IncompleteRequestException();
         }
 
@@ -123,6 +128,10 @@ public class VehicleService extends BaseService {
 
         if (request.getPlateNumber() != null) {
             vehicle.setPlateNumber(request.getPlateNumber());
+        }
+
+        if (request.isDeleted() != vehicle.isDeleted()) {
+            vehicle.setDeleted(request.isDeleted());
         }
 
         return vehicleRepository.save(vehicle);
