@@ -39,11 +39,14 @@ public abstract class VehicleEntity {
     @JoinColumn(name = "parking_area_id")
     private ParkingAreaEntity parkingArea;
 
+    @Column(name = "is_deleted")
+    private boolean deleted;
+
     public VehicleEntity() {
     }
 
     public VehicleEntity(int id, String make, String model, String plateNumber, String color, AccountEntity owner,
-            ParkingAreaEntity parkingArea) {
+            ParkingAreaEntity parkingArea, boolean deleted) {
         this.id = id;
         this.make = make;
         this.model = model;
@@ -51,6 +54,7 @@ public abstract class VehicleEntity {
         this.color = color;
         this.owner = owner;
         this.parkingArea = parkingArea;
+        this.deleted = deleted;
     }
 
     public int getId() {
@@ -109,6 +113,14 @@ public abstract class VehicleEntity {
         this.parkingArea = parkingArea;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -120,6 +132,7 @@ public abstract class VehicleEntity {
         result = prime * result + ((color == null) ? 0 : color.hashCode());
         result = prime * result + ((owner == null) ? 0 : owner.hashCode());
         result = prime * result + ((parkingArea == null) ? 0 : parkingArea.hashCode());
+        result = prime * result + (deleted ? 1231 : 1237);
         return result;
     }
 
@@ -163,6 +176,8 @@ public abstract class VehicleEntity {
             if (other.parkingArea != null)
                 return false;
         } else if (!parkingArea.equals(other.parkingArea))
+            return false;
+        if (deleted != other.deleted)
             return false;
         return true;
     }

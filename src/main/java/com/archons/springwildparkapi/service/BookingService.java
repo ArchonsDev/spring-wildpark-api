@@ -53,15 +53,14 @@ public class BookingService extends BaseService {
             throws AccountNotFoundException, IncompleteRequestException {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         try {
-            // VehicleEntity vehicle = vehicleService.getVehicleById(authorization,
-            // request.getVehicleId());
+            VehicleEntity vehicle = vehicleService.getVehicleById(authorization, request.getVehicleId());
             OrganizationEntity organization = orgService.getOrganizationById(request.getOrganizationId());
             // ParkingAreaEntity parkingArea =
             // parkingService.getParkingAreaById(authorization, request.getParkingAreaId());
 
             BookingEntity newBooking = new BookingEntity();
 
-            // newBooking.setVehicle(vehicle);
+            newBooking.setVehicle(vehicle);
             newBooking.setDate(request.getDate());
             newBooking.setDuration(request.getDuration());
             newBooking.setOrganization(organization);
