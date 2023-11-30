@@ -16,13 +16,12 @@ import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
-import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.repository.OrganizationRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class OrganizationService {
+public class OrganizationService extends BaseService {
     private final OrganizationRepository organizationRepository;
     private final AccountService accountService;
 
@@ -30,38 +29,6 @@ public class OrganizationService {
     public OrganizationService(OrganizationRepository organizationRepository, AccountService accountService) {
         this.organizationRepository = organizationRepository;
         this.accountService = accountService;
-    }
-
-    public boolean isOrganizationOwner(OrganizationEntity organization, AccountEntity account) {
-        if (organization.getOwner().equals(account)) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public boolean isOrganizationAdmin(OrganizationEntity organization, AccountEntity account) {
-        List<AccountEntity> organizationAdmins = organization.getAdmins();
-
-        for (AccountEntity a : organizationAdmins) {
-            if (a.equals(account)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean isOrganizationMember(OrganizationEntity organization, AccountEntity account) {
-        List<AccountEntity> organizationMembers = organization.getMembers();
-
-        for (AccountEntity a : organizationMembers) {
-            if (a.equals(account)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Transactional
@@ -103,82 +70,71 @@ public class OrganizationService {
         return organizationList;
     }
 
-    public OrganizationEntity getOrganizationById(String authorization, int organizationId)
-            throws OrganizationNotFoundException, InsufficientPrivilegesException, AccountNotFoundException {
-        AccountEntity requester = accountService.getAccountFromToken(authorization);
-        Optional<OrganizationEntity> existingOrganization = organizationRepository.findById(organizationId);
-
-        if (!existingOrganization.isPresent()) {
-            throw new OrganizationNotFoundException();
-        }
-
-        OrganizationEntity organization = existingOrganization.get();
-
-        if (!isOrganizationMember(organization, requester) &&
-                requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivilegesException();
-        }
-
-        return organization;
+    public OrganizationEntity getOrganizationById(int organizationId)
+            throws OrganizationNotFoundException {
+        return organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
     }
 
     public OrganizationEntity updateOrganization(String authorization, UpdateOrganizationRequest request,
             int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
             IncompleteRequestException {
-        AccountEntity requester = accountService.getAccountFromToken(authorization);
-        OrganizationEntity updatedOrganization = request.getUpdatedOrganization();
+        try {
+            AccountEntity requester = accountService.getAccountFromToken(authorization);
+            OrganizationEntity organization = organizationRepository.findById(organizationId)
+                    .orElseThrow(() -> new OrganizationNotFoundException());
 
-        if (updatedOrganization.getId() == 0) {
+            if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
+                    && !isAccountAdmin(requester)) {
+                throw new InsufficientPrivilegesException();
+            }
+
+            if (request.getName() != null) {
+                Optional<OrganizationEntity> existingOrganization = organizationRepository
+                        .findByName(request.getName());
+
+                if (existingOrganization.isPresent()) {
+                    throw new DuplicateEntityException();
+                }
+
+                organization.setName(request.getName());
+            }
+
+            if (request.getLatitude() != 0) {
+                organization.setLatitude(request.getLatitude());
+            }
+
+            if (request.getLongitude() != 0) {
+                organization.setLongitude(request.getLongitude());
+            }
+
+            if (request.getPaymentStrategy() != null) {
+                organization.setPaymentStrategy(request.getPaymentStrategy());
+            }
+
+            if (request.getOrganizationType() != null) {
+                organization.setType(request.getOrganizationType());
+            }
+
+            if (request.isDeleted() != organization.getDeleted()) {
+                organization.setDeleted(request.isDeleted());
+            }
+
+            return organizationRepository.save(organization);
+        } catch (DuplicateEntityException ex) {
             throw new IncompleteRequestException();
         }
-
-        OrganizationEntity organization = getOrganizationById(authorization, organizationId);
-
-        if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
-                && requester.getRole() != Role.ADMIN) {
-            throw new InsufficientPrivilegesException();
-        }
-
-        if (updatedOrganization.getName() != null) {
-            organization.setName(updatedOrganization.getName());
-        }
-
-        if (updatedOrganization.getLatitude() != 0) {
-            organization.setLatitude(updatedOrganization.getLatitude());
-        }
-
-        if (updatedOrganization.getLongitude() != 0) {
-            organization.setLongitude(updatedOrganization.getLongitude());
-        }
-
-        if (updatedOrganization.getPaymentStrategy() != null) {
-            organization.setPaymentStrategy(updatedOrganization.getPaymentStrategy());
-        }
-
-        if (updatedOrganization.getType() != null) {
-            organization.setType(updatedOrganization.getType());
-        }
-
-        if (updatedOrganization.getDeleted() != organization.getDeleted()) {
-            organization.setDeleted(updatedOrganization.getDeleted());
-        }
-
-        return organizationRepository.save(organization);
     }
 
     public void deleteOrganization(String authorization, int organizationId)
             throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
-        Optional<OrganizationEntity> existingOrganization = organizationRepository.findById(organizationId);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
 
-        if (!existingOrganization.isPresent()) {
-            throw new OrganizationNotFoundException();
-        }
-
-        OrganizationEntity organization = existingOrganization.get();
         if ((!isOrganizationAdmin(organization, requester) || !isOrganizationOwner(organization, requester))
-                && requester.getRole() != Role.ADMIN) {
+                && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
 

@@ -1,22 +1,85 @@
 package com.archons.springwildparkapi.dto;
 
-import com.archons.springwildparkapi.model.OrganizationEntity;
+import com.archons.springwildparkapi.model.AccountEntity;
+import com.archons.springwildparkapi.model.OrganizationType;
+import com.archons.springwildparkapi.model.PaymentStrategy;
 
 public class UpdateOrganizationRequest {
-    private OrganizationEntity updatedOrganization;
+    private String name;
+    private double latitude;
+    private double longitude;
+    private PaymentStrategy paymentStrategy;
+    private OrganizationType organizationType;
+    private AccountEntity owner;
+    private boolean deleted;
+
+    public UpdateOrganizationRequest(String name, double latitude, double longitude, PaymentStrategy paymentStrategy,
+            OrganizationType organizationType, AccountEntity owner, boolean deleted) {
+        this.name = name;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.paymentStrategy = paymentStrategy;
+        this.organizationType = organizationType;
+        this.owner = owner;
+        this.deleted = deleted;
+    }
 
     public UpdateOrganizationRequest() {
     }
 
-    public UpdateOrganizationRequest(OrganizationEntity updatedOrganization) {
-        this.updatedOrganization = updatedOrganization;
+    public String getName() {
+        return name;
     }
 
-    public OrganizationEntity getUpdatedOrganization() {
-        return updatedOrganization;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setUpdatedOrganization(OrganizationEntity updatedOrganization) {
-        this.updatedOrganization = updatedOrganization;
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public PaymentStrategy getPaymentStrategy() {
+        return paymentStrategy;
+    }
+
+    public void setPaymentStrategy(PaymentStrategy paymentStrategy) {
+        this.paymentStrategy = paymentStrategy;
+    }
+
+    public OrganizationType getOrganizationType() {
+        return organizationType;
+    }
+
+    public void setOrganizationType(OrganizationType organizationType) {
+        this.organizationType = organizationType;
+    }
+
+    public AccountEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(AccountEntity owner) {
+        this.owner = owner;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

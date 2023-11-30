@@ -68,17 +68,11 @@ public class OrganizationControllerV1 {
     }
 
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(
-            @RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int organizationId) {
+    public ResponseEntity<?> getOrganizationById(@PathVariable int organizationId) {
         try {
-            return ResponseEntity.ok(organizationService.getOrganizationById(authorization, organizationId));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
+            return ResponseEntity.ok(organizationService.getOrganizationById(organizationId));
         } catch (OrganizationNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
         }
     }
 
