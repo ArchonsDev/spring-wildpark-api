@@ -2,8 +2,6 @@ package com.archons.springwildparkapi.controller.v1;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +38,6 @@ public class OrganizationControllerV1 {
      */
     private OrganizationService organizationService;
 
-    @Autowired
     public OrganizationControllerV1(OrganizationService organizationService) {
         this.organizationService = organizationService;
     }
@@ -53,58 +50,32 @@ public class OrganizationControllerV1 {
     @PostMapping("/")
     public ResponseEntity<?> addOrganization(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddOrganizationRequest request) {
-        try {
-            return ResponseEntity.ok(organizationService.addOrganization(authorization, request));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (DuplicateEntityException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Organization already exists");
-        } catch (IncompleteRequestException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incomplete organization in request");
-        }
+            @RequestBody AddOrganizationRequest request)
+            throws InsufficientPrivilegesException, AccountNotFoundException, DuplicateEntityException,
+            IncompleteRequestException {
+        return ResponseEntity.ok(organizationService.addOrganization(authorization, request));
     }
 
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(@PathVariable int organizationId) {
-        try {
-            return ResponseEntity.ok(organizationService.getOrganizationById(organizationId));
-        } catch (OrganizationNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
-        }
+    public ResponseEntity<?> getOrganizationById(@PathVariable int organizationId)
+            throws OrganizationNotFoundException {
+        return ResponseEntity.ok(organizationService.getOrganizationById(organizationId));
     }
 
     @PutMapping("/{organizationId}")
     public ResponseEntity<?> updateOrganization(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody UpdateOrganizationRequest request, @PathVariable int organizationId) {
-        try {
-            return ResponseEntity.ok(organizationService.updateOrganization(authorization, request, organizationId));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (OrganizationNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (IncompleteRequestException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incomplete organization in request");
-        }
+            @RequestBody UpdateOrganizationRequest request, @PathVariable int organizationId)
+            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
+            IncompleteRequestException {
+        return ResponseEntity.ok(organizationService.updateOrganization(authorization, request, organizationId));
     }
 
     @DeleteMapping("/{organizationId}")
     public ResponseEntity<?> deleteOrganization(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int organizationId) {
-        try {
-            organizationService.deleteOrganization(authorization, organizationId);
-            return ResponseEntity.ok().build();
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } catch (OrganizationNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
+            @PathVariable int organizationId)
+            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
+        organizationService.deleteOrganization(authorization, organizationId);
+        return ResponseEntity.ok().build();
     }
 }

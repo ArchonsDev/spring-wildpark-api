@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +30,6 @@ public class AccountService extends BaseService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    @Autowired
     public AccountService(PasswordEncoder passwordEncoder, AccountRepository accountRepository,
             AuthenticationManager authenticationManager, JwtService jwtService) {
         super(passwordEncoder);

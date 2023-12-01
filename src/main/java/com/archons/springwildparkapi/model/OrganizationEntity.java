@@ -2,7 +2,9 @@ package com.archons.springwildparkapi.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,6 +45,7 @@ public class OrganizationEntity {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnore
     private AccountEntity owner;
 
     @ManyToMany
@@ -164,6 +167,11 @@ public class OrganizationEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @JsonProperty("owner")
+    public String getOwnerEmail() {
+        return owner != null ? owner.getEmail() : "Unknown";
     }
 
     @Override

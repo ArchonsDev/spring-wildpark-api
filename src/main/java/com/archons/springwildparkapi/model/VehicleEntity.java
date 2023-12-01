@@ -1,5 +1,8 @@
 package com.archons.springwildparkapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.DiscriminatorType;
@@ -33,6 +36,7 @@ public abstract class VehicleEntity {
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
+    @JsonIgnore
     private AccountEntity owner;
 
     @ManyToOne
@@ -119,6 +123,11 @@ public abstract class VehicleEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @JsonProperty("ownerId")
+    public int getOwnerId() {
+        return owner != null ? owner.getId() : 0;
     }
 
     @Override

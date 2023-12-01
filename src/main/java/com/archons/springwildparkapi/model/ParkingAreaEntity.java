@@ -2,7 +2,8 @@ package com.archons.springwildparkapi.model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,7 +17,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tblparkingarea")
-@JsonIgnoreProperties({ "parkedVehicles", "organization" })
 public class ParkingAreaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +30,7 @@ public class ParkingAreaEntity {
 
     @ManyToOne
     @JoinColumn(name = "organization_id")
+    @JsonIgnore
     private OrganizationEntity organization;
 
     @Column(name = "is_deleted")
@@ -85,6 +86,11 @@ public class ParkingAreaEntity {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @JsonProperty("organization")
+    public String getOrganizationName() {
+        return organization != null ? organization.getName() : "Unknown";
     }
 
     @Override

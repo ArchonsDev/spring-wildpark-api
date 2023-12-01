@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.model.AccountEntity;
@@ -15,7 +14,6 @@ import com.archons.springwildparkapi.repository.PaymentRepository;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
 
-    @Autowired
     public PaymentService(PaymentRepository paymentRepository) {
         this.paymentRepository = paymentRepository;
     }

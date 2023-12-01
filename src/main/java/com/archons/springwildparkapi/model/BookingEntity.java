@@ -2,6 +2,9 @@ package com.archons.springwildparkapi.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -23,6 +26,7 @@ public class BookingEntity {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
+    @JsonIgnore
     private VehicleEntity vehicle;
 
     @Column(name = "date")
@@ -33,17 +37,21 @@ public class BookingEntity {
 
     @OneToOne
     @JoinColumn(name = "organization_id")
+    @JsonIgnore
     private OrganizationEntity organization;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "parking_area_id")
     private ParkingAreaEntity area;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "booker_id")
     private AccountEntity booker;
 
@@ -150,6 +158,31 @@ public class BookingEntity {
 
     public void setStatus(BookingStatus status) {
         this.status = status;
+    }
+
+    @JsonProperty("vehicle")
+    public String getVehiclePlateNumber() {
+        return vehicle != null ? vehicle.getPlateNumber() : "Unknown";
+    }
+
+    @JsonProperty("organization")
+    public String getOrganizationName() {
+        return organization != null ? organization.getName() : "Unknown";
+    }
+
+    @JsonProperty("parkingArea")
+    public int getParkingAreaId() {
+        return area != null ? area.getId() : 0;
+    }
+
+    @JsonProperty("paymentId")
+    public int getPaymentId() {
+        return payment != null ? payment.getId() : 0;
+    }
+
+    @JsonProperty("booker")
+    public String getBookerEmail() {
+        return booker != null ? booker.getEmail() : "Unknown";
     }
 
     @Override

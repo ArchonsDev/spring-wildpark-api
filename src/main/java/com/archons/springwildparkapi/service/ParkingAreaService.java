@@ -3,7 +3,6 @@ package com.archons.springwildparkapi.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.requests.AddParkingAreaRequest;
@@ -23,7 +22,6 @@ public class ParkingAreaService extends BaseService {
     private final OrganizationService organizationService;
     private final AccountService accountService;
 
-    @Autowired
     public ParkingAreaService(ParkingAreaRepository parkingAreaRepository, OrganizationService organizationService,
             AccountService accountService) {
         this.parkingAreaRepository = parkingAreaRepository;

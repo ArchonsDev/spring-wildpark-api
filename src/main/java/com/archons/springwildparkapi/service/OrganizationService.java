@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
@@ -25,7 +24,6 @@ public class OrganizationService extends BaseService {
     private final OrganizationRepository organizationRepository;
     private final AccountService accountService;
 
-    @Autowired
     public OrganizationService(OrganizationRepository organizationRepository, AccountService accountService) {
         this.organizationRepository = organizationRepository;
         this.accountService = accountService;

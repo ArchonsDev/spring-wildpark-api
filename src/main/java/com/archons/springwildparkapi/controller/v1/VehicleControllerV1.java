@@ -1,7 +1,5 @@
 package com.archons.springwildparkapi.controller.v1;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,79 +34,44 @@ public class VehicleControllerV1 {
      */
     private final VehicleService vehicleService;
 
-    @Autowired
     public VehicleControllerV1(VehicleService vehicleService) {
         this.vehicleService = vehicleService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllvehicles(@RequestHeader(name = "Authorization") String authorization) {
-        try {
-            return ResponseEntity.ok(vehicleService.getAllVehicles(authorization));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        }
+    public ResponseEntity<?> getAllvehicles(@RequestHeader(name = "Authorization") String authorization)
+            throws AccountNotFoundException, InsufficientPrivilegesException {
+        return ResponseEntity.ok(vehicleService.getAllVehicles(authorization));
     }
 
     @GetMapping("/{vehicleId}")
     public ResponseEntity<?> getVehicleById(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int vehicleId) {
-        try {
-            return ResponseEntity.ok(vehicleService.getVehicleById(authorization, vehicleId));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (VehicleNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
-        }
+            @PathVariable int vehicleId)
+            throws InsufficientPrivilegesException, VehicleNotFoundException, AccountNotFoundException {
+        return ResponseEntity.ok(vehicleService.getVehicleById(authorization, vehicleId));
     }
 
     @PostMapping("/")
     public ResponseEntity<?> addVehicle(@RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddVehicleRequest request) {
-        try {
-            return ResponseEntity.ok(vehicleService.addVehicle(authorization, request));
-        } catch (VehicleAlreadyExistsException ex) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Vehicle already exists");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (IncompleteRequestException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid request");
-        }
+            @RequestBody AddVehicleRequest request)
+            throws VehicleAlreadyExistsException, AccountNotFoundException, IncompleteRequestException {
+        return ResponseEntity.ok(vehicleService.addVehicle(authorization, request));
     }
 
     @PutMapping("/{vehicleId}")
     public ResponseEntity<?> updateVehicle(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody UpdateVehicleRequest request, @PathVariable int vehicleId) {
-        try {
-            return ResponseEntity.ok(vehicleService.updateVehicle(authorization, request, vehicleId));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (VehicleNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
-        } catch (ParkingAreaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
-        }
+            @RequestBody UpdateVehicleRequest request, @PathVariable int vehicleId)
+            throws InsufficientPrivilegesException, AccountNotFoundException, VehicleNotFoundException,
+            ParkingAreaNotFoundException {
+        return ResponseEntity.ok(vehicleService.updateVehicle(authorization, request, vehicleId));
     }
 
     @DeleteMapping("/{vehicleId}")
     public ResponseEntity<?> deleteVehicle(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int vehicleId) {
-        try {
-            vehicleService.deleteVehicle(authorization, vehicleId);
-            return ResponseEntity.ok().build();
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (VehicleNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
-        }
+            @PathVariable int vehicleId)
+            throws AccountNotFoundException, VehicleNotFoundException, InsufficientPrivilegesException {
+        vehicleService.deleteVehicle(authorization, vehicleId);
+        return ResponseEntity.ok().build();
     }
 }

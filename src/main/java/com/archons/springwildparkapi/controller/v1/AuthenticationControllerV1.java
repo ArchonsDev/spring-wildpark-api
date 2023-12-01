@@ -32,21 +32,13 @@ public class AuthenticationControllerV1 {
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterAccountRequest request) {
-        try {
-            return ResponseEntity.ok(accountService.register(request));
-        } catch (DuplicateEntityException ex) {
-            return ResponseEntity.status(409).build();
-        }
+            @RequestBody RegisterAccountRequest request) throws DuplicateEntityException {
+        return ResponseEntity.ok(accountService.register(request));
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
-            @RequestBody AuthenticationRequest request) {
-        try {
-            return ResponseEntity.ok(accountService.authenticate(request));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
+            @RequestBody AuthenticationRequest request) throws AccountNotFoundException {
+        return ResponseEntity.ok(accountService.authenticate(request));
     }
 }

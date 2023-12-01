@@ -1,7 +1,5 @@
 package com.archons.springwildparkapi.controller.v1;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,76 +35,42 @@ public class ParkingAreaControllerV1 {
      */
     private ParkingAreaService parkingAreaService;
 
-    @Autowired
     public ParkingAreaControllerV1(ParkingAreaService parkingAreaService) {
         this.parkingAreaService = parkingAreaService;
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllParkingAreas(@RequestHeader(name = "Authorization") String authorization) {
-        try {
-            return ResponseEntity.ok(parkingAreaService.getAllParkingAreas(authorization));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        }
+    public ResponseEntity<?> getAllParkingAreas(@RequestHeader(name = "Authorization") String authorization)
+            throws AccountNotFoundException, InsufficientPrivilegesException {
+        return ResponseEntity.ok(parkingAreaService.getAllParkingAreas(authorization));
     }
 
     @PostMapping("/")
     public ResponseEntity<?> addParkingArea(@RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddParkingAreaRequest request) {
-        try {
-            return ResponseEntity.ok(parkingAreaService.addParkingArea(authorization, request));
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (OrganizationNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Organization not found");
-        }
+            @RequestBody AddParkingAreaRequest request)
+            throws InsufficientPrivilegesException, AccountNotFoundException, OrganizationNotFoundException {
+        return ResponseEntity.ok(parkingAreaService.addParkingArea(authorization, request));
     }
 
     @GetMapping("/{parkingId}")
-    public ResponseEntity<?> getParkingAreaById(@PathVariable int parkingId) {
-        try {
-            return ResponseEntity.ok(parkingAreaService.getParkingAreaById(parkingId));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (ParkingAreaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
-        }
+    public ResponseEntity<?> getParkingAreaById(@PathVariable int parkingId)
+            throws AccountNotFoundException, ParkingAreaNotFoundException, InsufficientPrivilegesException {
+        return ResponseEntity.ok(parkingAreaService.getParkingAreaById(parkingId));
     }
 
     @PutMapping("/{parkingId}")
     public ResponseEntity<?> updateParkingArea(
             @RequestHeader(name = "Authorization") String authorization, @RequestBody UpdateParkingAreaRequest request,
-            @PathVariable int parkingId) {
-        try {
-            return ResponseEntity.ok(parkingAreaService.updateParkingArea(authorization, request, parkingId));
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (ParkingAreaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
-        }
+            @PathVariable int parkingId)
+            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        return ResponseEntity.ok(parkingAreaService.updateParkingArea(authorization, request, parkingId));
     }
 
     @DeleteMapping("/{parkingId}")
     public ResponseEntity<?> deleteParkingArea(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int parkingId) {
-        try {
-            parkingAreaService.deleteParkingArea(authorization, parkingId);
-            return ResponseEntity.ok().build();
-        } catch (AccountNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
-        } catch (InsufficientPrivilegesException ex) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unauthorized action");
-        } catch (ParkingAreaNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Area not found");
-        }
+            @PathVariable int parkingId)
+            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+        parkingAreaService.deleteParkingArea(authorization, parkingId);
+        return ResponseEntity.ok().build();
     }
 }

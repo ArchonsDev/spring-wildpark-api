@@ -1,6 +1,5 @@
 package com.archons.springwildparkapi.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.requests.AddBookingRequest;
@@ -35,7 +34,6 @@ public class BookingService extends BaseService {
     private final OrganizationService orgService;
     private final ParkingAreaService parkingService;
 
-    @Autowired
     public BookingService(BookingRepository bookingRepository, VehicleRepository vehicleRepository,
             AccountService accountService, VehicleService vehicleService, OrganizationService orgService,
             ParkingAreaService parkingService) {

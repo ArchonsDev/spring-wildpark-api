@@ -1,6 +1,5 @@
 package com.archons.springwildparkapi.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +19,6 @@ import com.archons.springwildparkapi.service.BaseService;
 public class ApplicationConfig {
     private final AccountRepository accountRepository;
 
-    @Autowired
     public ApplicationConfig(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
     }
