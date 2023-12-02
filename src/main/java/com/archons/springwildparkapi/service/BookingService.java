@@ -65,7 +65,7 @@ public class BookingService extends BaseService {
 
         BookingEntity newBooking = new BookingEntity();
         // Check for vehicle ownership & admin
-        if (!requester.equals(vehicle.getOwner()) && !isAccountAdmin(requester)) {
+        if (!requester.equals(vehicle.getOwner())) {
             throw new InsufficientPrivilegesException();
         }
         // Check for parking area ownership
