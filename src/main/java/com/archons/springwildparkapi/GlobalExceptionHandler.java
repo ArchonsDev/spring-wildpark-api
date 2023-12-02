@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
+import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
@@ -23,6 +24,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleAccountNotFoundException(AccountNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account not found");
+    }
+
+    @ExceptionHandler(BookingNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handleBookingNotFoundException(BookingNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
     }
 
     @ExceptionHandler(VehicleNotFoundException.class)
