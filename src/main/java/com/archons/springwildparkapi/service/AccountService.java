@@ -96,7 +96,7 @@ public class AccountService extends BaseService {
         Iterable<AccountEntity> iterable = accountRepository.findAll();
         List<AccountEntity> userList = new ArrayList<>();
         for (AccountEntity a : iterable) {
-            if (a.getEnabled())
+            if (a.isEnabled())
                 userList.add(a);
         }
 
@@ -113,6 +113,10 @@ public class AccountService extends BaseService {
         }
 
         return account;
+    }
+
+    public AccountEntity getAccountById(int accountId) throws Exception {
+        return accountRepository.findById(accountId).orElseThrow(() -> new AccountNotFoundException());
     }
 
     public AccountEntity updateAccount(String authorization, UpdateAccountRequest request, int accountId)
@@ -157,9 +161,6 @@ public class AccountService extends BaseService {
         }
         if (request.getZipCode() != 0) {
             account.setZipCode(request.getZipCode());
-        }
-        if (request.getRole() != null) {
-            account.setRole(request.getRole());
         }
 
         return accountRepository.save(account);

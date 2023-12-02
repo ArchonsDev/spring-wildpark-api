@@ -88,7 +88,8 @@ public class ParkingAreaService extends BaseService {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity organization = organizationService.getOrganizationById(request.getOrganizationId());
         // Check permissions
-        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)) {
+        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
+                && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
         // Build entitiy

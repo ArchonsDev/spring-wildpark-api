@@ -1,5 +1,6 @@
 package com.archons.springwildparkapi.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -69,9 +70,9 @@ public class BaseService {
         return LocalDateTime.parse(dateTimeString, formatter);
     }
 
-    public LocalDateTime parseDate(String dateTimeString) {
+    public LocalDate parseDate(String dateString) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        return LocalDateTime.parse(dateTimeString, formatter);
+        return LocalDate.parse(dateString, formatter);
     }
 }
