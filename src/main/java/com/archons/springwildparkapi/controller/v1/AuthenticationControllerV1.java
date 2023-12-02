@@ -14,14 +14,6 @@ import com.archons.springwildparkapi.service.AccountService;
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthenticationControllerV1 {
-    /*
-     * This controller class handles all authentication related requests
-     * 
-     * Endpoints:
-     * POST /api/v1/auth/register
-     * POST /api/v1/auth/authenticate
-     * 
-     */
     private final AccountService accountService;
 
     public AuthenticationControllerV1(AccountService accountService) {

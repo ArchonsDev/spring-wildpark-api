@@ -23,16 +23,6 @@ import com.archons.springwildparkapi.service.BookingService;
 @RestController
 @RequestMapping("/api/v1/bookings")
 public class BookingControllerV1 {
-    /*
-     * This controller class handles all booking related requests
-     * 
-     * Endpoints:
-     * POST /api/v1/bookings/
-     * GET /api/v1/bookings/{bookingId}
-     * PUT /api/v1/bookings/{bookingId}
-     * DELETE /api/v1/bookings/{bookingId}
-     * 
-     */
     private BookingService bookingService;
 
     public BookingControllerV1(BookingService bookingService) {

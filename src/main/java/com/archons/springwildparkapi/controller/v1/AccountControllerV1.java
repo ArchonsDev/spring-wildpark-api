@@ -19,20 +19,6 @@ import com.archons.springwildparkapi.service.JwtService;
 @RestController
 @RequestMapping("/api/v1/accounts")
 public class AccountControllerV1 {
-    /*
-     * This controller class handles all account related requests
-     * 
-     * Endpoints:
-     * GET /api/v1/accounts/
-     * GET /api/v1/accounts/{id}
-     * PUT /api/v1/accounts/{id}
-     * GET /api/v1/accounts/{id}/vehicles
-     * GET /api/v1/accounts/{id}/organizations
-     * GET /api/v1/accounts/{id}/bookings
-     * GET /api/v1/accounts/{id}/payments
-     * 
-     */
-
     private final AccountService accountService;
 
     public AccountControllerV1(AccountService accountService, JwtService jwtService) {

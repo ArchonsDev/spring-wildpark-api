@@ -18,17 +18,6 @@ import com.archons.springwildparkapi.service.ParkingAreaService;
 @RestController
 @RequestMapping("/api/v1/parking")
 public class ParkingAreaControllerV1 {
-    /*
-     * 
-     * This controller class hanldes all requests related to parking area
-     * 
-     * Endpoints:
-     * POST /api/v1/parking/
-     * GET /api/v1/parking/{parkingId}
-     * PUT /api/v1/parking/{parkingId}
-     * DELETE /api/v1/parking/{parkingId}
-     * 
-     */
     private ParkingAreaService parkingAreaService;
 
     public ParkingAreaControllerV1(ParkingAreaService parkingAreaService) {

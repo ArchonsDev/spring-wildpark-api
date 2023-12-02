@@ -129,7 +129,7 @@ public class BookingService extends BaseService {
         VehicleEntity vehicle = booking.getVehicle();
         vehicle.setParkingArea(null);
         vehicleRepository.save(vehicle);
-
+        // Update booking
         booking.setDeleted(true);
         bookingRepository.save(booking);
     }
@@ -143,7 +143,7 @@ public class BookingService extends BaseService {
         if (booking == null) {
             throw new BookingNotFoundException();
         }
-
+        // Update booking status & remove payment association
         booking.setPayment(null);
         booking.setStatus(BookingStatus.PENDING_PAYMENT);
         bookingRepository.save(booking);
@@ -153,7 +153,7 @@ public class BookingService extends BaseService {
         if (booking == null) {
             throw new BookingNotFoundException();
         }
-
+        // Update booking status
         booking.setStatus(BookingStatus.CONFIRMED);
         bookingRepository.save(booking);
     }

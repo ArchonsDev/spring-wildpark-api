@@ -6,7 +6,9 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
+import com.archons.springwildparkapi.dto.reesponses.OrganizationMemberResponse;
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
@@ -129,6 +131,140 @@ public class OrganizationService extends BaseService {
         }
         // Set deleted
         organization.setDeleted(true);
+        organizationRepository.save(organization);
+    }
+
+    public OrganizationMemberResponse getOrganizationAccounts(String authorization, int organizationId)
+            throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
+        // Check permissions
+        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
+                && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Build response
+        OrganizationMemberResponse response = new OrganizationMemberResponse();
+        response.setOwner(organization.getOwner());
+        response.setAdmins(organization.getAdmins());
+        response.setMembers(organization.getMembers());
+
+        return response;
+    }
+
+    @Transactional
+    public OrganizationMemberResponse addOrganizationMember(String authorization, int accountId, int organizationId)
+            throws Exception {
+        // Retreive entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        AccountEntity account = accountService.getAccountById(authorization, accountId);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
+        // Check permissions
+        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
+                && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Check existence
+        if (isOrganizationMember(organization, account)) {
+            throw new DuplicateEntityException();
+        }
+        // Update organization members
+        List<AccountEntity> members = organization.getMembers();
+        members.add(account);
+        organization.setMembers(members);
+        organization = organizationRepository.save(organization);
+        // Build response
+        OrganizationMemberResponse response = new OrganizationMemberResponse();
+        response.setOwner(organization.getOwner());
+        response.setAdmins(organization.getAdmins());
+        response.setMembers(organization.getMembers());
+
+        return response;
+    }
+
+    @Transactional
+    public OrganizationMemberResponse addOrganizationAdmin(String authorization, int accountId, int organizationId)
+            throws Exception {
+        // Retreive entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        AccountEntity account = accountService.getAccountById(authorization, accountId);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
+        // Check permissions
+        if (!isOrganizationOwner(organization, requester) && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Check existence
+        if (!isOrganizationMember(organization, account)) {
+            throw new AccountNotFoundException();
+        }
+        // Update organization members
+        List<AccountEntity> members = organization.getMembers();
+        members.remove(account);
+        organization.setMembers(members);
+        // Update organizationa dmins
+        List<AccountEntity> admins = organization.getAdmins();
+        admins.add(account);
+        organization.setAdmins(members);
+
+        organization = organizationRepository.save(organization);
+        // Build response
+        OrganizationMemberResponse response = new OrganizationMemberResponse();
+        response.setOwner(organization.getOwner());
+        response.setAdmins(organization.getAdmins());
+        response.setMembers(organization.getMembers());
+
+        return response;
+    }
+
+    public void kickMember(String authorization, int accountId, int organizationId) throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        AccountEntity account = accountService.getAccountById(authorization, accountId);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
+        // Check permissions
+        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
+                && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Check presence
+        if (!isOrganizationMember(organization, account)) {
+            throw new AccountNotFoundException();
+        }
+        // Update members
+        List<AccountEntity> members = organization.getMembers();
+        members.remove(account);
+        organization.setMembers(members);
+        organizationRepository.save(organization);
+    }
+
+    public void demote(String authorization, int accountId, int organizationId) throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        AccountEntity account = accountService.getAccountById(authorization, accountId);
+        OrganizationEntity organization = organizationRepository.findById(organizationId)
+                .orElseThrow(() -> new OrganizationNotFoundException());
+        // Check permissions
+        if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
+                && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Check presence
+        if (!isOrganizationAdmin(organization, account)) {
+            throw new AccountNotFoundException();
+        }
+        // Update members
+        List<AccountEntity> admins = organization.getAdmins();
+        admins.remove(account);
+        organization.setAdmins(admins);
+        List<AccountEntity> members = organization.getMembers();
+        members.add(account);
+        organization.setMembers(members);
+
         organizationRepository.save(organization);
     }
 }

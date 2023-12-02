@@ -17,6 +17,8 @@ import com.archons.springwildparkapi.model.BookingStatus;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.repository.PaymentRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class PaymentService extends BaseService {
     private final PaymentRepository paymentRepository;
@@ -31,12 +33,13 @@ public class PaymentService extends BaseService {
     }
 
     public List<PaymentEntity> getAllPayments(String authorization) throws Exception {
+        // Retreive requester
         AccountEntity requester = accountService.getAccountFromToken(authorization);
-
+        // Check permissions
         if (!isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Build payment list
         Iterable<PaymentEntity> iterable = paymentRepository.findAll();
         List<PaymentEntity> paymentList = new ArrayList<>();
         iterable.forEach(paymentList::add);
@@ -45,8 +48,9 @@ public class PaymentService extends BaseService {
     }
 
     public PaymentEntity getPaymentById(String authorization, int paymentId) throws Exception {
+        // Retrive requester
         AccountEntity requester = accountService.getAccountFromToken(authorization);
-
+        // Check permissions
         if (!isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
@@ -56,13 +60,14 @@ public class PaymentService extends BaseService {
 
     public PaymentEntity updatePayment(String authorization, UpdatePaymentRequest request, int paymentId)
             throws Exception {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentNotFoundException());
-
+        // Check permissions
         if (!requester.equals(payment.getPayor()) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Update payment
         if (request.isDeleted() != payment.isDeleted()) {
             payment.setDeleted(request.isDeleted());
         }
@@ -70,25 +75,29 @@ public class PaymentService extends BaseService {
         return paymentRepository.save(payment);
     }
 
+    @Transactional
     public void deletePayment(String authorization, int paymentId) throws Exception {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentNotFoundException());
-
+        // Check permissions
         if (!isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
+        // Retrieve bookinng associated with payment
         Optional<BookingEntity> exisingBooking = bookingService.getBookingByPayment(payment);
         if (exisingBooking.isPresent()) {
             BookingEntity booking = exisingBooking.get();
             bookingService.deleteBookingPayment(booking);
         }
-
+        // Update payment
         payment.setDeleted(true);
         paymentRepository.save(payment);
     }
 
+    @Transactional
     public PaymentEntity addPayment(String authorization, AddPaymentRequest request) throws Exception {
+        // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         AccountEntity payor = accountService.getAccountById(authorization, request.getPayorId());
         BookingEntity booking = bookingService.getBookingById(authorization, request.getBookingId());

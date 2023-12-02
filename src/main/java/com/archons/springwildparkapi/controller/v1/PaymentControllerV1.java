@@ -21,15 +21,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/payments")
 public class PaymentControllerV1 {
-    /*
-     * This controller class handles all payment related requests
-     * 
-     * Endpoints:
-     * POST /api/v1/payments/
-     * GET /api/v1/payments/{paymentId}
-     * PUT /api/v1/payments/{paymentId}
-     * 
-     */
     private PaymentService paymentService;
 
     public PaymentControllerV1(PaymentService paymentService) {

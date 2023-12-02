@@ -18,14 +18,6 @@ import com.archons.springwildparkapi.service.VehicleService;
 @RestController
 @RequestMapping("/api/v1/vehicles")
 public class VehicleControllerV1 {
-    /*
-     * This controller class handles all vehicle related requests
-     * 
-     * Endpoints:
-     * POST /api/v1/vehicles/
-     * PUT /api/v1/vehicles/{id}
-     * 
-     */
     private final VehicleService vehicleService;
 
     public VehicleControllerV1(VehicleService vehicleService) {
