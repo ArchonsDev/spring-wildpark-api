@@ -106,10 +106,6 @@ public class BookingService extends BaseService {
             throw new InsufficientPrivilegesException();
         }
         // Updateable fields
-        if (request.getPayment() != null) {
-            booking.setPayment(request.getPayment());
-            booking.setStatus(BookingStatus.CONFIRMED);
-        }
         if (request.isDeleted() != booking.isDeleted()) {
             booking.setDeleted(request.isDeleted());
         }
