@@ -109,6 +109,10 @@ public class OrganizationService extends BaseService {
             if (request.getOrganizationType() != null) {
                 organization.setType(request.getOrganizationType());
             }
+            if (request.getOwnerId() != 0) {
+                AccountEntity account = accountService.getAccountById(authorization, request.getOwnerId());
+                organization.setOwner(account);
+            }
             if (request.isDeleted() != organization.getDeleted()) {
                 organization.setDeleted(request.isDeleted());
             }

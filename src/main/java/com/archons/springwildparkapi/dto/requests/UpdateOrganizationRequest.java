@@ -1,6 +1,5 @@
 package com.archons.springwildparkapi.dto.requests;
 
-import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.OrganizationType;
 import com.archons.springwildparkapi.model.PaymentStrategy;
 
@@ -10,17 +9,17 @@ public class UpdateOrganizationRequest {
     private double longitude;
     private PaymentStrategy paymentStrategy;
     private OrganizationType organizationType;
-    private AccountEntity owner;
+    private int ownerId;
     private boolean deleted;
 
     public UpdateOrganizationRequest(String name, double latitude, double longitude, PaymentStrategy paymentStrategy,
-            OrganizationType organizationType, AccountEntity owner, boolean deleted) {
+            OrganizationType organizationType, int ownerId, boolean deleted) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.paymentStrategy = paymentStrategy;
         this.organizationType = organizationType;
-        this.owner = owner;
+        this.ownerId = ownerId;
         this.deleted = deleted;
     }
 
@@ -67,12 +66,12 @@ public class UpdateOrganizationRequest {
         this.organizationType = organizationType;
     }
 
-    public AccountEntity getOwner() {
-        return owner;
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(AccountEntity owner) {
-        this.owner = owner;
+    public void setownerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public boolean isDeleted() {
