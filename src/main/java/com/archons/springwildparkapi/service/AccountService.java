@@ -135,7 +135,7 @@ public class AccountService extends BaseService {
             account.setLastname(request.getLastname());
         }
         if (request.getBirthdate() != null) {
-            account.setBirthdate(request.getBirthdate());
+            account.setBirthdate(parseDate(request.getBirthdate()));
         }
         if (request.getContactNo() != null) {
             account.setContactNo(request.getContactNo());

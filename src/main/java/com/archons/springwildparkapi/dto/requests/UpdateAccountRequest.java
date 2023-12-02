@@ -1,14 +1,12 @@
 package com.archons.springwildparkapi.dto.requests;
 
-import java.time.LocalDateTime;
-
 import com.archons.springwildparkapi.model.Role;
 
 public class UpdateAccountRequest {
     private String password;
     private String firstname;
     private String lastname;
-    private LocalDateTime birthdate;
+    private String birthdate;
     private String contactNo;
     private String gender;
     private String street;
@@ -18,7 +16,7 @@ public class UpdateAccountRequest {
     private int zipCode;
     private Role role;
 
-    public UpdateAccountRequest(String password, String firstname, String lastname, LocalDateTime birthdate,
+    public UpdateAccountRequest(String password, String firstname, String lastname, String birthdate,
             String contactNo, String gender, String street, String municipality, String province, String country,
             int zipCode, Role role) {
         this.password = password;
@@ -62,11 +60,11 @@ public class UpdateAccountRequest {
         this.lastname = lastname;
     }
 
-    public LocalDateTime getBirthdate() {
+    public String getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(LocalDateTime birthdate) {
+    public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
     }
 
