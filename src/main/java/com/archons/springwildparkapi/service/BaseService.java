@@ -68,4 +68,10 @@ public class BaseService {
 
         return LocalDateTime.parse(dateTimeString, formatter);
     }
+
+    public LocalDateTime parseDate(String dateTimeString) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        return LocalDateTime.parse(dateTimeString, formatter);
+    }
 }
