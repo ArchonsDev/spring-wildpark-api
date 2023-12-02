@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.requests.AddVehicleRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateVehicleRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
-import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
-import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
-import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.service.VehicleService;
 
 @RestController
@@ -40,37 +34,31 @@ public class VehicleControllerV1 {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllvehicles(@RequestHeader(name = "Authorization") String authorization)
-            throws AccountNotFoundException, InsufficientPrivilegesException {
+            throws Exception {
         return ResponseEntity.ok(vehicleService.getAllVehicles(authorization));
     }
 
     @GetMapping("/{vehicleId}")
     public ResponseEntity<?> getVehicleById(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int vehicleId)
-            throws InsufficientPrivilegesException, VehicleNotFoundException, AccountNotFoundException {
+            @PathVariable int vehicleId) throws Exception {
         return ResponseEntity.ok(vehicleService.getVehicleById(authorization, vehicleId));
     }
 
     @PostMapping("/")
     public ResponseEntity<?> addVehicle(@RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddVehicleRequest request)
-            throws VehicleAlreadyExistsException, AccountNotFoundException, IncompleteRequestException {
+            @RequestBody AddVehicleRequest request) throws Exception {
         return ResponseEntity.ok(vehicleService.addVehicle(authorization, request));
     }
 
     @PutMapping("/{vehicleId}")
-    public ResponseEntity<?> updateVehicle(
-            @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody UpdateVehicleRequest request, @PathVariable int vehicleId)
-            throws InsufficientPrivilegesException, AccountNotFoundException, VehicleNotFoundException,
-            ParkingAreaNotFoundException {
+    public ResponseEntity<?> updateVehicle(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody UpdateVehicleRequest request, @PathVariable int vehicleId) throws Exception {
         return ResponseEntity.ok(vehicleService.updateVehicle(authorization, request, vehicleId));
     }
 
     @DeleteMapping("/{vehicleId}")
     public ResponseEntity<?> deleteVehicle(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int vehicleId)
-            throws AccountNotFoundException, VehicleNotFoundException, InsufficientPrivilegesException {
+            @PathVariable int vehicleId) throws Exception {
         vehicleService.deleteVehicle(authorization, vehicleId);
         return ResponseEntity.ok().build();
     }

@@ -1,6 +1,9 @@
 package com.archons.springwildparkapi.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,16 +30,20 @@ public class PaymentEntity {
     private PaymentType paymentType;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDateTime date;
 
     @ManyToOne
     @JoinColumn(name = "payor_id")
+    @JsonIgnore
     private AccountEntity payor;
+
+    @Column(name = "is_deleted")
+    private boolean deleted;
 
     public PaymentEntity() {
     }
 
-    public PaymentEntity(int id, float amount, PaymentType paymentType, Date date, AccountEntity payor) {
+    public PaymentEntity(int id, float amount, PaymentType paymentType, LocalDateTime date, AccountEntity payor) {
         this.id = id;
         this.amount = amount;
         this.paymentType = paymentType;
@@ -68,11 +75,11 @@ public class PaymentEntity {
         this.paymentType = paymentType;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -84,6 +91,19 @@ public class PaymentEntity {
         this.payor = payor;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    @JsonProperty("payor")
+    public String getPayorEmail() {
+        return payor != null ? payor.getEmail() : "Unknown";
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -93,6 +113,7 @@ public class PaymentEntity {
         result = prime * result + ((paymentType == null) ? 0 : paymentType.hashCode());
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + ((payor == null) ? 0 : payor.hashCode());
+        result = prime * result + (deleted ? 1231 : 1237);
         return result;
     }
 
@@ -120,6 +141,8 @@ public class PaymentEntity {
             if (other.payor != null)
                 return false;
         } else if (!payor.equals(other.payor))
+            return false;
+        if (deleted != other.deleted)
             return false;
         return true;
     }

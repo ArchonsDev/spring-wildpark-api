@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
@@ -30,9 +29,7 @@ public class OrganizationService extends BaseService {
     }
 
     @Transactional
-    public OrganizationEntity addOrganization(String authorization, AddOrganizationRequest request)
-            throws InsufficientPrivilegesException, AccountNotFoundException, DuplicateEntityException,
-            IncompleteRequestException {
+    public OrganizationEntity addOrganization(String authorization, AddOrganizationRequest request) throws Exception {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
 
         OrganizationEntity newOrganization = request.getNewOrganization();
@@ -75,9 +72,7 @@ public class OrganizationService extends BaseService {
     }
 
     public OrganizationEntity updateOrganization(String authorization, UpdateOrganizationRequest request,
-            int organizationId)
-            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
-            IncompleteRequestException {
+            int organizationId) throws Exception {
         // Wrapper exception
         try {
             // Retrieve entities
@@ -122,8 +117,7 @@ public class OrganizationService extends BaseService {
         }
     }
 
-    public void deleteOrganization(String authorization, int organizationId)
-            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
+    public void deleteOrganization(String authorization, int organizationId) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity organization = organizationRepository.findById(organizationId)

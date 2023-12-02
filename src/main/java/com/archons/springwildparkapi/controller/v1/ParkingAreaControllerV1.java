@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.requests.AddParkingAreaRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateParkingAreaRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
-import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.service.ParkingAreaService;
 
 @RestController
@@ -41,35 +37,30 @@ public class ParkingAreaControllerV1 {
 
     @GetMapping("/")
     public ResponseEntity<?> getAllParkingAreas(@RequestHeader(name = "Authorization") String authorization)
-            throws AccountNotFoundException, InsufficientPrivilegesException {
+            throws Exception {
         return ResponseEntity.ok(parkingAreaService.getAllParkingAreas(authorization));
     }
 
     @PostMapping("/")
     public ResponseEntity<?> addParkingArea(@RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddParkingAreaRequest request)
-            throws InsufficientPrivilegesException, AccountNotFoundException, OrganizationNotFoundException {
+            @RequestBody AddParkingAreaRequest request) throws Exception {
         return ResponseEntity.ok(parkingAreaService.addParkingArea(authorization, request));
     }
 
     @GetMapping("/{parkingId}")
-    public ResponseEntity<?> getParkingAreaById(@PathVariable int parkingId)
-            throws AccountNotFoundException, ParkingAreaNotFoundException, InsufficientPrivilegesException {
+    public ResponseEntity<?> getParkingAreaById(@PathVariable int parkingId) throws Exception {
         return ResponseEntity.ok(parkingAreaService.getParkingAreaById(parkingId));
     }
 
     @PutMapping("/{parkingId}")
-    public ResponseEntity<?> updateParkingArea(
-            @RequestHeader(name = "Authorization") String authorization, @RequestBody UpdateParkingAreaRequest request,
-            @PathVariable int parkingId)
-            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+    public ResponseEntity<?> updateParkingArea(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody UpdateParkingAreaRequest request, @PathVariable int parkingId) throws Exception {
         return ResponseEntity.ok(parkingAreaService.updateParkingArea(authorization, request, parkingId));
     }
 
     @DeleteMapping("/{parkingId}")
     public ResponseEntity<?> deleteParkingArea(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int parkingId)
-            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+            @PathVariable int parkingId) throws Exception {
         parkingAreaService.deleteParkingArea(authorization, parkingId);
         return ResponseEntity.ok().build();
     }

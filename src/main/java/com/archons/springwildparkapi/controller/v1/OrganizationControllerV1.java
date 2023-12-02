@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
-import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
-import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
-import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
 import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.service.OrganizationService;
 
@@ -48,33 +43,25 @@ public class OrganizationControllerV1 {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> addOrganization(
-            @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddOrganizationRequest request)
-            throws InsufficientPrivilegesException, AccountNotFoundException, DuplicateEntityException,
-            IncompleteRequestException {
+    public ResponseEntity<?> addOrganization(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody AddOrganizationRequest request) throws Exception {
         return ResponseEntity.ok(organizationService.addOrganization(authorization, request));
     }
 
     @GetMapping("/{organizationId}")
-    public ResponseEntity<?> getOrganizationById(@PathVariable int organizationId)
-            throws OrganizationNotFoundException {
+    public ResponseEntity<?> getOrganizationById(@PathVariable int organizationId) throws Exception {
         return ResponseEntity.ok(organizationService.getOrganizationById(organizationId));
     }
 
     @PutMapping("/{organizationId}")
-    public ResponseEntity<?> updateOrganization(
-            @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody UpdateOrganizationRequest request, @PathVariable int organizationId)
-            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException,
-            IncompleteRequestException {
+    public ResponseEntity<?> updateOrganization(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody UpdateOrganizationRequest request, @PathVariable int organizationId) throws Exception {
         return ResponseEntity.ok(organizationService.updateOrganization(authorization, request, organizationId));
     }
 
     @DeleteMapping("/{organizationId}")
     public ResponseEntity<?> deleteOrganization(@RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int organizationId)
-            throws InsufficientPrivilegesException, OrganizationNotFoundException, AccountNotFoundException {
+            @PathVariable int organizationId) throws Exception {
         organizationService.deleteOrganization(authorization, organizationId);
         return ResponseEntity.ok().build();
     }

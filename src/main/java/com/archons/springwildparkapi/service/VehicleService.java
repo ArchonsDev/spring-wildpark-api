@@ -8,10 +8,8 @@ import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.requests.AddVehicleRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateVehicleRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
@@ -31,8 +29,7 @@ public class VehicleService extends BaseService {
         this.accountService = accountService;
     }
 
-    public VehicleEntity addVehicle(String authorization, AddVehicleRequest request)
-            throws VehicleAlreadyExistsException, AccountNotFoundException, IncompleteRequestException {
+    public VehicleEntity addVehicle(String authorization, AddVehicleRequest request) throws Exception {
         // Retrieve requester
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         // Validate request
@@ -77,8 +74,7 @@ public class VehicleService extends BaseService {
         return vehicleRepository.save(newVehicle);
     }
 
-    public List<VehicleEntity> getAllVehicles(String authorization)
-            throws AccountNotFoundException, InsufficientPrivilegesException {
+    public List<VehicleEntity> getAllVehicles(String authorization) throws Exception {
         // Retrieve requester
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         // Check permissions
@@ -96,8 +92,7 @@ public class VehicleService extends BaseService {
         return vehicleList;
     }
 
-    public VehicleEntity getVehicleById(String authorization, int vehicleId)
-            throws InsufficientPrivilegesException, VehicleNotFoundException, AccountNotFoundException {
+    public VehicleEntity getVehicleById(String authorization, int vehicleId) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         VehicleEntity vehicle = vehicleRepository.findById(vehicleId)
@@ -111,8 +106,7 @@ public class VehicleService extends BaseService {
     }
 
     public VehicleEntity updateVehicle(String authorization, UpdateVehicleRequest request, int vehicleId)
-            throws InsufficientPrivilegesException, AccountNotFoundException, VehicleNotFoundException,
-            ParkingAreaNotFoundException {
+            throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         VehicleEntity vehicle = getVehicleById(authorization, vehicleId);
@@ -133,8 +127,7 @@ public class VehicleService extends BaseService {
         return vehicleRepository.save(vehicle);
     }
 
-    public void deleteVehicle(String authorization, int vehicleId)
-            throws AccountNotFoundException, VehicleNotFoundException, InsufficientPrivilegesException {
+    public void deleteVehicle(String authorization, int vehicleId) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         VehicleEntity vehicle = getVehicleById(authorization, vehicleId);

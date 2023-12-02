@@ -16,14 +16,7 @@ import com.archons.springwildparkapi.dto.requests.AddBookingRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateBookingRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
-import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
-import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.MaxCapacityReachedException;
-import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
-import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
-import com.archons.springwildparkapi.exceptions.UnknownParkingAreaException;
-import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.service.BookingService;
 
@@ -47,36 +40,26 @@ public class BookingControllerV1 {
     }
 
     @PostMapping("/")
-    public ResponseEntity<BookingEntity> addBooking(
-            @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddBookingRequest request)
-            throws AccountNotFoundException, IncompleteRequestException, InsufficientPrivilegesException,
-            VehicleNotFoundException, OrganizationNotFoundException, ParkingAreaNotFoundException,
-            UnknownParkingAreaException, DuplicateEntityException, MaxCapacityReachedException {
+    public ResponseEntity<BookingEntity> addBooking(@RequestHeader(name = "Authorization") String authorization,
+            @RequestBody AddBookingRequest request) throws Exception {
         return ResponseEntity.ok(bookingService.addBooking(authorization, request));
     }
 
     @GetMapping("/{bookingId}")
-    public ResponseEntity<?> getBookingById(
-            @RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+    public ResponseEntity<?> getBookingById(@RequestHeader(name = "Authorization") String authorization,
+            @PathVariable int bookingId) throws Exception {
         return ResponseEntity.ok(bookingService.getBookingById(authorization, bookingId));
     }
 
     @PutMapping("/{bookingId}")
     public ResponseEntity<?> updateBooking(@RequestHeader(name = "Authorization") String authorization,
-            @RequestBody UpdateBookingRequest request,
-            @PathVariable int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+            @RequestBody UpdateBookingRequest request, @PathVariable int bookingId) throws Exception {
         return ResponseEntity.ok(bookingService.updateBooking(authorization, request, bookingId));
     }
 
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<?> deleteBooking(
-            @RequestHeader(name = "Authorization") String authorization,
-            @PathVariable int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+    public ResponseEntity<?> deleteBooking(@RequestHeader(name = "Authorization") String authorization,
+            @PathVariable int bookingId) throws Exception {
         try {
             bookingService.deleteBooking(authorization, bookingId);
             return ResponseEntity.ok().build();

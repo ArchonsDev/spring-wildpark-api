@@ -1,24 +1,22 @@
 package com.archons.springwildparkapi.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.requests.AddBookingRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateBookingRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.BookingNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
-import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.MaxCapacityReachedException;
-import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
-import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.exceptions.UnknownParkingAreaException;
-import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
 import com.archons.springwildparkapi.model.BookingStatus;
 import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.ParkingAreaEntity;
+import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
 import com.archons.springwildparkapi.repository.BookingRepository;
 import com.archons.springwildparkapi.repository.VehicleRepository;
@@ -45,8 +43,7 @@ public class BookingService extends BaseService {
         this.parkingService = parkingService;
     }
 
-    public BookingEntity getBookingById(String authorization, int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+    public BookingEntity getBookingById(String authorization, int bookingId) throws Exception {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException());
@@ -59,10 +56,7 @@ public class BookingService extends BaseService {
     }
 
     @Transactional
-    public BookingEntity addBooking(String authorization, AddBookingRequest request)
-            throws AccountNotFoundException, IncompleteRequestException, InsufficientPrivilegesException,
-            VehicleNotFoundException, OrganizationNotFoundException, ParkingAreaNotFoundException,
-            UnknownParkingAreaException, DuplicateEntityException, MaxCapacityReachedException {
+    public BookingEntity addBooking(String authorization, AddBookingRequest request) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         VehicleEntity vehicle = vehicleService.getVehicleById(authorization, request.getVehicleId());
@@ -102,7 +96,7 @@ public class BookingService extends BaseService {
     }
 
     public BookingEntity updateBooking(String authorization, UpdateBookingRequest request, int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+            throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         BookingEntity booking = bookingRepository.findById(bookingId)
@@ -123,8 +117,7 @@ public class BookingService extends BaseService {
         return bookingRepository.save(booking);
     }
 
-    public void deleteBooking(String authorization, int bookingId)
-            throws InsufficientPrivilegesException, BookingNotFoundException, AccountNotFoundException {
+    public void deleteBooking(String authorization, int bookingId) throws Exception {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         BookingEntity booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new BookingNotFoundException());
@@ -138,6 +131,30 @@ public class BookingService extends BaseService {
         vehicleRepository.save(vehicle);
 
         booking.setDeleted(true);
+        bookingRepository.save(booking);
+    }
+
+    // Utility
+    public Optional<BookingEntity> getBookingByPayment(PaymentEntity payment) {
+        return bookingRepository.findByPayment(payment);
+    }
+
+    public void deleteBookingPayment(BookingEntity booking) throws Exception {
+        if (booking == null) {
+            throw new BookingNotFoundException();
+        }
+
+        booking.setPayment(null);
+        booking.setStatus(BookingStatus.PENDING_PAYMENT);
+        bookingRepository.save(booking);
+    }
+
+    public void makePayment(BookingEntity booking) throws Exception {
+        if (booking == null) {
+            throw new BookingNotFoundException();
+        }
+
+        booking.setStatus(BookingStatus.CONFIRMED);
         bookingRepository.save(booking);
     }
 }

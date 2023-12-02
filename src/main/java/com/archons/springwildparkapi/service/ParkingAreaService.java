@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.archons.springwildparkapi.dto.requests.AddParkingAreaRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateParkingAreaRequest;
-import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
-import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
 import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.OrganizationEntity;
@@ -29,8 +27,7 @@ public class ParkingAreaService extends BaseService {
         this.accountService = accountService;
     }
 
-    public List<ParkingAreaEntity> getAllParkingAreas(String authorization)
-            throws AccountNotFoundException, InsufficientPrivilegesException {
+    public List<ParkingAreaEntity> getAllParkingAreas(String authorization) throws Exception {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
 
         if (!isAccountAdmin(requester)) {
@@ -44,15 +41,13 @@ public class ParkingAreaService extends BaseService {
         return parkingAreas;
     }
 
-    public ParkingAreaEntity getParkingAreaById(int parkingAreaid)
-            throws AccountNotFoundException, ParkingAreaNotFoundException, InsufficientPrivilegesException {
+    public ParkingAreaEntity getParkingAreaById(int parkingAreaid) throws Exception {
         return parkingAreaRepository.findById(parkingAreaid)
                 .orElseThrow(() -> new ParkingAreaNotFoundException());
     }
 
     public ParkingAreaEntity updateParkingArea(String authorization, UpdateParkingAreaRequest request,
-            int parkingId)
-            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+            int parkingId) throws Exception {
         // Retreive entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         ParkingAreaEntity parkingArea = getParkingAreaById(parkingId);
@@ -73,8 +68,7 @@ public class ParkingAreaService extends BaseService {
         return parkingAreaRepository.save(parkingArea);
     }
 
-    public void deleteParkingArea(String authorization, int parkingId)
-            throws AccountNotFoundException, InsufficientPrivilegesException, ParkingAreaNotFoundException {
+    public void deleteParkingArea(String authorization, int parkingId) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         ParkingAreaEntity parkingArea = getParkingAreaById(parkingId);
@@ -89,8 +83,7 @@ public class ParkingAreaService extends BaseService {
         parkingAreaRepository.save(parkingArea);
     }
 
-    public ParkingAreaEntity addParkingArea(String authorization, AddParkingAreaRequest request)
-            throws InsufficientPrivilegesException, AccountNotFoundException, OrganizationNotFoundException {
+    public ParkingAreaEntity addParkingArea(String authorization, AddParkingAreaRequest request) throws Exception {
         // Retrieve entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         OrganizationEntity organization = organizationService.getOrganizationById(request.getOrganizationId());

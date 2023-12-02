@@ -14,11 +14,17 @@ import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.MaxCapacityReachedException;
 import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
 import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
+import com.archons.springwildparkapi.exceptions.PaymentNotFoundException;
 import com.archons.springwildparkapi.exceptions.UnknownParkingAreaException;
 import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(PaymentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> handlePaymentNotFoundException(PaymentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Payment not found");
+    }
 
     @ExceptionHandler(AccountNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
