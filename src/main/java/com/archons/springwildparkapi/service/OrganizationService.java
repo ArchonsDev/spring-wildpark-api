@@ -125,7 +125,7 @@ public class OrganizationService extends BaseService {
         OrganizationEntity organization = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new OrganizationNotFoundException());
         // Check permissions
-        if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
+        if (!isOrganizationOwner(organization, requester)
                 && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
