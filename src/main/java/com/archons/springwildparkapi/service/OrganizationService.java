@@ -82,8 +82,7 @@ public class OrganizationService extends BaseService {
             OrganizationEntity organization = organizationRepository.findById(organizationId)
                     .orElseThrow(() -> new OrganizationNotFoundException());
             // Check permissions
-            if (!isOrganizationAdmin(organization, requester) && !isOrganizationOwner(organization, requester)
-                    && !isAccountAdmin(requester)) {
+            if (!isOrganizationAdmin(organization, requester) && !isAccountAdmin(requester)) {
                 throw new InsufficientPrivilegesException();
             }
             // Update fields
@@ -110,6 +109,10 @@ public class OrganizationService extends BaseService {
                 organization.setType(request.getOrganizationType());
             }
             if (request.getOwnerId() != 0) {
+                if (!isOrganizationOwner(organization, requester)) {
+                    throw new InsufficientPrivilegesException();
+                }
+
                 AccountEntity account = accountService.getAccountById(authorization, request.getOwnerId());
                 organization.setOwner(account);
             }
