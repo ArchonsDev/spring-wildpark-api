@@ -120,47 +120,46 @@ public class AccountService extends BaseService {
         // Retrieve entities
         AccountEntity requester = getAccountFromToken(authorization);
         AccountEntity account = getAccountById(authorization, accountId);
-        AccountEntity updatedAccount = request.getUpdatedAccount();
         // Check permissions
         if (!requester.equals(account) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
         // Updateable fields:
-        if (updatedAccount.getPassword() != null) {
-            account.setPassword(encodePassword(updatedAccount.getPassword()));
+        if (request.getPassword() != null) {
+            account.setPassword(encodePassword(request.getPassword()));
         }
-        if (updatedAccount.getFirstname() != null) {
-            account.setFirstname(updatedAccount.getFirstname());
+        if (request.getFirstname() != null) {
+            account.setFirstname(request.getFirstname());
         }
-        if (updatedAccount.getLastname() != null) {
-            account.setLastname(updatedAccount.getLastname());
+        if (request.getLastname() != null) {
+            account.setLastname(request.getLastname());
         }
-        if (updatedAccount.getBirthdate() != null) {
-            account.setBirthdate(updatedAccount.getBirthdate());
+        if (request.getBirthdate() != null) {
+            account.setBirthdate(request.getBirthdate());
         }
-        if (updatedAccount.getContactNo() != null) {
-            account.setContactNo(updatedAccount.getContactNo());
+        if (request.getContactNo() != null) {
+            account.setContactNo(request.getContactNo());
         }
-        if (updatedAccount.getGender() != null) {
-            account.setGender(updatedAccount.getGender());
+        if (request.getGender() != null) {
+            account.setGender(request.getGender());
         }
-        if (updatedAccount.getStreet() != null) {
-            account.setStreet(updatedAccount.getStreet());
+        if (request.getStreet() != null) {
+            account.setStreet(request.getStreet());
         }
-        if (updatedAccount.getMunicipality() != null) {
-            account.setMunicipality(updatedAccount.getMunicipality());
+        if (request.getMunicipality() != null) {
+            account.setMunicipality(request.getMunicipality());
         }
-        if (updatedAccount.getProvince() != null) {
-            account.setProvince(updatedAccount.getProvince());
+        if (request.getProvince() != null) {
+            account.setProvince(request.getProvince());
         }
-        if (updatedAccount.getCountry() != null) {
-            account.setCountry(updatedAccount.getCountry());
+        if (request.getCountry() != null) {
+            account.setCountry(request.getCountry());
         }
-        if (updatedAccount.getZipCode() != 0) {
-            account.setZipCode(updatedAccount.getZipCode());
+        if (request.getZipCode() != 0) {
+            account.setZipCode(request.getZipCode());
         }
-        if (updatedAccount.getRole() != null) {
-            account.setRole(updatedAccount.getRole());
+        if (request.getRole() != null) {
+            account.setRole(request.getRole());
         }
 
         return accountRepository.save(account);
