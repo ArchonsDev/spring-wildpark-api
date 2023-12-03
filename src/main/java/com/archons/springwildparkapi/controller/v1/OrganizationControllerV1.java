@@ -14,18 +14,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.reesponses.OrganizationMemberResponse;
+import com.archons.springwildparkapi.dto.requests.AddOrganizationMemberRequest;
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.model.OrganizationEntity;
+import com.archons.springwildparkapi.model.ParkingAreaEntity;
 import com.archons.springwildparkapi.service.OrganizationService;
+import com.archons.springwildparkapi.service.ParkingAreaService;
 
 @RestController
 @RequestMapping("/api/v1/organizations")
 public class OrganizationControllerV1 {
     private OrganizationService organizationService;
+    private ParkingAreaService parkingService;
 
-    public OrganizationControllerV1(OrganizationService organizationService) {
+    public OrganizationControllerV1(OrganizationService organizationService, ParkingAreaService parkingService) {
         this.organizationService = organizationService;
+        this.parkingService = parkingService;
     }
 
     @GetMapping("/")
@@ -67,8 +72,8 @@ public class OrganizationControllerV1 {
     @PostMapping("/{organizationId}/members")
     public ResponseEntity<OrganizationMemberResponse> addOrganizationMember(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody int accountId, @PathVariable int organizationId) throws Exception {
-        return ResponseEntity.ok(organizationService.addOrganizationMember(authorization, accountId, organizationId));
+            @RequestBody AddOrganizationMemberRequest request, @PathVariable int organizationId) throws Exception {
+        return ResponseEntity.ok(organizationService.addOrganizationMember(authorization, request, organizationId));
     }
 
     @PostMapping("/{organizationId}/admins")
@@ -90,5 +95,11 @@ public class OrganizationControllerV1 {
             @PathVariable int organizationId, @PathVariable int accountId) throws Exception {
         organizationService.demote(authorization, accountId, organizationId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{organizationId}/parking")
+    public ResponseEntity<List<ParkingAreaEntity>> getOrganizationParking(@PathVariable int organizationId)
+            throws Exception {
+        return ResponseEntity.ok(parkingService.getOrganizationParking(organizationId));
     }
 }

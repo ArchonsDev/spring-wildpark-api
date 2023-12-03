@@ -27,6 +27,19 @@ public class ParkingAreaService extends BaseService {
         this.accountService = accountService;
     }
 
+    public List<ParkingAreaEntity> getAllParkingAreas() {
+        Iterable<ParkingAreaEntity> iterable = parkingAreaRepository.findAll();
+        List<ParkingAreaEntity> parkingList = new ArrayList<>();
+
+        for (ParkingAreaEntity p : iterable) {
+            if (!p.isDeleted()) {
+                parkingList.add(p);
+            }
+        }
+
+        return parkingList;
+    }
+
     public List<ParkingAreaEntity> getAllParkingAreas(String authorization) throws Exception {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
 
@@ -98,5 +111,19 @@ public class ParkingAreaService extends BaseService {
         newParkingArea.setSlots(request.getSlots());
 
         return parkingAreaRepository.save(newParkingArea);
+    }
+
+    public List<ParkingAreaEntity> getOrganizationParking(int organizationId) throws Exception {
+        OrganizationEntity organization = organizationService.getOrganizationById(organizationId);
+        List<ParkingAreaEntity> iterable = getAllParkingAreas();
+        List<ParkingAreaEntity> orgParking = new ArrayList<>();
+
+        for (ParkingAreaEntity p : iterable) {
+            if (organization.equals(p.getOrganization())) {
+                orgParking.add(p);
+            }
+        }
+
+        return orgParking;
     }
 }

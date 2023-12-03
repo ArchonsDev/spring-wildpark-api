@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.dto.reesponses.OrganizationMemberResponse;
+import com.archons.springwildparkapi.dto.requests.AddOrganizationMemberRequest;
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
@@ -160,11 +161,12 @@ public class OrganizationService extends BaseService {
     }
 
     @Transactional
-    public OrganizationMemberResponse addOrganizationMember(String authorization, int accountId, int organizationId)
+    public OrganizationMemberResponse addOrganizationMember(String authorization, AddOrganizationMemberRequest request,
+            int organizationId)
             throws Exception {
         // Retreive entities
         AccountEntity requester = accountService.getAccountFromToken(authorization);
-        AccountEntity account = accountService.getAccountById(accountId);
+        AccountEntity account = accountService.getAccountById(request.getAccountId());
         OrganizationEntity organization = getOrganizationById(organizationId);
         // Check permissions
         if (!isOrganizationOwner(organization, requester) && !isOrganizationAdmin(organization, requester)
