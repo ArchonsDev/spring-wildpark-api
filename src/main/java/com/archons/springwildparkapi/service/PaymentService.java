@@ -50,12 +50,14 @@ public class PaymentService extends BaseService {
     public PaymentEntity getPaymentById(String authorization, int paymentId) throws Exception {
         // Retrive requester
         AccountEntity requester = accountService.getAccountFromToken(authorization);
+        PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentNotFoundException());
+
         // Check permissions
-        if (!isAccountAdmin(requester)) {
+        if (!requester.equals(payment.getPayor()) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
 
-        return paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentNotFoundException());
+        return payment;
     }
 
     public PaymentEntity updatePayment(String authorization, UpdatePaymentRequest request, int paymentId)
@@ -64,7 +66,7 @@ public class PaymentService extends BaseService {
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         PaymentEntity payment = paymentRepository.findById(paymentId).orElseThrow(() -> new PaymentNotFoundException());
         // Check permissions
-        if (!requester.equals(payment.getPayor()) && !isAccountAdmin(requester)) {
+        if (!isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
         // Update payment

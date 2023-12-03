@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archons.springwildparkapi.dto.reesponses.OrganizationMemberResponse;
-import com.archons.springwildparkapi.dto.requests.AddOrganizationMemberRequest;
+import com.archons.springwildparkapi.dto.requests.AccountRequest;
 import com.archons.springwildparkapi.dto.requests.AddOrganizationRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateOrganizationRequest;
 import com.archons.springwildparkapi.model.OrganizationEntity;
@@ -72,15 +72,15 @@ public class OrganizationControllerV1 {
     @PostMapping("/{organizationId}/members")
     public ResponseEntity<OrganizationMemberResponse> addOrganizationMember(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody AddOrganizationMemberRequest request, @PathVariable int organizationId) throws Exception {
+            @RequestBody AccountRequest request, @PathVariable int organizationId) throws Exception {
         return ResponseEntity.ok(organizationService.addOrganizationMember(authorization, request, organizationId));
     }
 
     @PostMapping("/{organizationId}/admins")
     public ResponseEntity<OrganizationMemberResponse> addOrganizationAdmin(
             @RequestHeader(name = "Authorization") String authorization,
-            @RequestBody int accountId, @PathVariable int organizationId) throws Exception {
-        return ResponseEntity.ok(organizationService.addOrganizationAdmin(authorization, accountId, organizationId));
+            @RequestBody AccountRequest request, @PathVariable int organizationId) throws Exception {
+        return ResponseEntity.ok(organizationService.addOrganizationAdmin(authorization, request, organizationId));
     }
 
     @DeleteMapping("/{organizationId}/members/{accountId}")
