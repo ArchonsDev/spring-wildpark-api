@@ -1,9 +1,14 @@
 package com.archons.springwildparkapi.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,38 +26,48 @@ public class BookingEntity {
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id")
+    @JsonIgnore
     private VehicleEntity vehicle;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDateTime date;
 
     @Column(name = "duration")
     private float duration;
 
     @OneToOne
     @JoinColumn(name = "organization_id")
+    @JsonIgnore
     private OrganizationEntity organization;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "parking_area_id")
     private ParkingAreaEntity area;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "payment_id")
     private PaymentEntity payment;
 
     @OneToOne
+    @JsonIgnore
     @JoinColumn(name = "booker_id")
     private AccountEntity booker;
 
     @Column(name = "is_deleted")
     private boolean deleted;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private BookingStatus status;
+
     public BookingEntity() {
     }
 
-    public BookingEntity(int id, VehicleEntity vehicle, Date date, float duration, OrganizationEntity organization,
-            ParkingAreaEntity area, PaymentEntity payment, AccountEntity booker, boolean deleted) {
+    public BookingEntity(int id, VehicleEntity vehicle, LocalDateTime date, float duration,
+            OrganizationEntity organization, ParkingAreaEntity area, PaymentEntity payment, AccountEntity booker,
+            boolean deleted, BookingStatus status) {
         this.id = id;
         this.vehicle = vehicle;
         this.date = date;
@@ -62,6 +77,7 @@ public class BookingEntity {
         this.payment = payment;
         this.booker = booker;
         this.deleted = deleted;
+        this.status = status;
     }
 
     public int getId() {
@@ -80,11 +96,11 @@ public class BookingEntity {
         this.vehicle = vehicle;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -128,12 +144,45 @@ public class BookingEntity {
         this.booker = booker;
     }
 
-    public boolean getDeleted() {
+    public boolean isDeleted() {
         return deleted;
     }
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    @JsonProperty("vehicle")
+    public String getVehiclePlateNumber() {
+        return vehicle != null ? vehicle.getPlateNumber() : "Unknown";
+    }
+
+    @JsonProperty("organization")
+    public String getOrganizationName() {
+        return organization != null ? organization.getName() : "Unknown";
+    }
+
+    @JsonProperty("parkingArea")
+    public int getParkingAreaId() {
+        return area != null ? area.getId() : 0;
+    }
+
+    @JsonProperty("paymentId")
+    public int getPaymentId() {
+        return payment != null ? payment.getId() : 0;
+    }
+
+    @JsonProperty("booker")
+    public String getBookerEmail() {
+        return booker != null ? booker.getEmail() : "Unknown";
     }
 
     @Override
@@ -148,6 +197,8 @@ public class BookingEntity {
         result = prime * result + ((area == null) ? 0 : area.hashCode());
         result = prime * result + ((payment == null) ? 0 : payment.hashCode());
         result = prime * result + ((booker == null) ? 0 : booker.hashCode());
+        result = prime * result + (deleted ? 1231 : 1237);
+        result = prime * result + ((status == null) ? 0 : status.hashCode());
         return result;
     }
 
@@ -193,6 +244,10 @@ public class BookingEntity {
             if (other.booker != null)
                 return false;
         } else if (!booker.equals(other.booker))
+            return false;
+        if (deleted != other.deleted)
+            return false;
+        if (status != other.status)
             return false;
         return true;
     }

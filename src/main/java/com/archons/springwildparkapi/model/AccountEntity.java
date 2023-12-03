@@ -1,7 +1,7 @@
 package com.archons.springwildparkapi.model;
 
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +24,8 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tblaccount")
 @JsonIgnoreProperties({ "ownedOrganizations", "adminOrganizations", "memberOrganizations", "vehicles", "bookings",
-        "payments" })
+        "payments", "role", "enabled", "authorities", "username", "accountNonLocked", "accountNonExpired",
+        "credentialsNonExpired", "admin" })
 public class AccountEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,10 +44,7 @@ public class AccountEntity implements UserDetails {
     public String lastname;
 
     @Column(name = "birthdate")
-    public Date birthdate;
-
-    @Column(name = "is_admin")
-    public boolean isAdmin;
+    public LocalDate birthdate;
 
     @Column(name = "contact_no")
     private String contactNo;
@@ -97,9 +95,9 @@ public class AccountEntity implements UserDetails {
     public AccountEntity() {
     }
 
-    public AccountEntity(int id, String email, String password, String firstname, String lastname, Date birthdate,
-            boolean isAdmin, String contactNo, String gender, String street, String municipality, String province,
-            String country, int zipCode, Role role, List<VehicleEntity> vehicles,
+    public AccountEntity(int id, String email, String password, String firstname, String lastname,
+            LocalDate birthdate, String contactNo, String gender, String street,
+            String municipality, String province, String country, int zipCode, Role role, List<VehicleEntity> vehicles,
             List<OrganizationEntity> ownedOrganizations, List<OrganizationEntity> adminorganizations,
             List<OrganizationEntity> memberOrganizations, List<BookingEntity> bookings,
             List<PaymentEntity> payments, boolean enabled) {
@@ -109,7 +107,6 @@ public class AccountEntity implements UserDetails {
         this.firstname = firstname;
         this.lastname = lastname;
         this.birthdate = birthdate;
-        this.isAdmin = isAdmin;
         this.contactNo = contactNo;
         this.gender = gender;
         this.street = street;
@@ -167,20 +164,12 @@ public class AccountEntity implements UserDetails {
         this.lastname = lastname;
     }
 
-    public Date getBirthdate() {
+    public LocalDate getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(Date birthdate) {
+    public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean isAdmin) {
-        this.isAdmin = isAdmin;
     }
 
     public String getContactNo() {
@@ -295,14 +284,6 @@ public class AccountEntity implements UserDetails {
         this.payments = payments;
     }
 
-    public boolean getEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -328,6 +309,10 @@ public class AccountEntity implements UserDetails {
         return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public String getUsername() {
         return email;
@@ -343,7 +328,6 @@ public class AccountEntity implements UserDetails {
         result = prime * result + ((firstname == null) ? 0 : firstname.hashCode());
         result = prime * result + ((lastname == null) ? 0 : lastname.hashCode());
         result = prime * result + ((birthdate == null) ? 0 : birthdate.hashCode());
-        result = prime * result + (isAdmin ? 1231 : 1237);
         result = prime * result + ((contactNo == null) ? 0 : contactNo.hashCode());
         result = prime * result + ((gender == null) ? 0 : gender.hashCode());
         result = prime * result + ((street == null) ? 0 : street.hashCode());
@@ -397,8 +381,6 @@ public class AccountEntity implements UserDetails {
             if (other.birthdate != null)
                 return false;
         } else if (!birthdate.equals(other.birthdate))
-            return false;
-        if (isAdmin != other.isAdmin)
             return false;
         if (contactNo == null) {
             if (other.contactNo != null)

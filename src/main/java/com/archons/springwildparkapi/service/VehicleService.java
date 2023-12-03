@@ -4,91 +4,139 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.archons.springwildparkapi.dto.requests.AddVehicleRequest;
+import com.archons.springwildparkapi.dto.requests.UpdateVehicleRequest;
+import com.archons.springwildparkapi.exceptions.IncompleteRequestException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
+import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 import com.archons.springwildparkapi.model.AccountEntity;
-import com.archons.springwildparkapi.model.Role;
+import com.archons.springwildparkapi.model.FourWheelVehicleEntity;
+import com.archons.springwildparkapi.model.TwoWheelVehicleEntity;
 import com.archons.springwildparkapi.model.VehicleEntity;
+import com.archons.springwildparkapi.model.VehicleType;
 import com.archons.springwildparkapi.repository.VehicleRepository;
 
 @Service
-public class VehicleService {
+public class VehicleService extends BaseService {
     private final VehicleRepository vehicleRepository;
+    private final AccountService accountService;
 
-    @Autowired
-    public VehicleService(VehicleRepository vehicleRepository) {
+    public VehicleService(VehicleRepository vehicleRepository, AccountService accountService) {
         this.vehicleRepository = vehicleRepository;
+        this.accountService = accountService;
     }
 
-    public Optional<VehicleEntity> addVehicle(AccountEntity requester, VehicleEntity newVehicle)
-            throws VehicleAlreadyExistsException {
-        List<VehicleEntity> vehicleList = requester.getVehicles();
-        boolean isUnique = true;
-
-        for (VehicleEntity vehicle : vehicleList) {
-            if (vehicle.equals(newVehicle)) {
-                isUnique = false;
-                break;
-            }
+    public VehicleEntity addVehicle(String authorization, AddVehicleRequest request) throws Exception {
+        // Retrieve requester
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        // Validate request
+        if (request.getMake() == null ||
+                request.getModel() == null ||
+                request.getPlateNumber() == null ||
+                request.getColor() == null) {
+            throw new IncompleteRequestException();
         }
-
-        if (!isUnique) {
+        // Check uniqueness
+        Optional<VehicleEntity> existingVehicle = vehicleRepository.findByPlateNumber(request.getPlateNumber());
+        if (existingVehicle.isPresent()) {
             throw new VehicleAlreadyExistsException();
         }
+        // Build entity
+        VehicleEntity newVehicle;
+        if (request.getType() == VehicleType.TWO_WHEEL) {
+            if (request.getDisplacement() == 0) {
+                throw new IncompleteRequestException();
+            }
 
-        return Optional.of(vehicleRepository.save(newVehicle));
+            TwoWheelVehicleEntity twoWheelVehicle = new TwoWheelVehicleEntity();
+            twoWheelVehicle.setDisplacement(request.getDisplacement());
+            newVehicle = twoWheelVehicle;
+        } else if (request.getType() == VehicleType.FOUR_WHEEL) {
+            if (request.getSize() == null) {
+                throw new IncompleteRequestException();
+            }
+
+            FourWheelVehicleEntity fourWheelVehicle = new FourWheelVehicleEntity();
+            fourWheelVehicle.setType(request.getSize());
+            newVehicle = fourWheelVehicle;
+        } else {
+            throw new IncompleteRequestException();
+        }
+        newVehicle.setMake(request.getMake());
+        newVehicle.setModel(request.getModel());
+        newVehicle.setPlateNumber(request.getPlateNumber());
+        newVehicle.setColor(request.getColor());
+        newVehicle.setOwner(requester);
+
+        return vehicleRepository.save(newVehicle);
     }
 
-    public List<VehicleEntity> getAllVehicles() {
+    public List<VehicleEntity> getAllVehicles(String authorization) throws Exception {
+        // Retrieve requester
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        // Check permissions
+        if (!isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Build list
         Iterable<VehicleEntity> iterable = vehicleRepository.findAll();
         List<VehicleEntity> vehicleList = new ArrayList<>();
-        iterable.forEach(vehicleList::add);
+        for (VehicleEntity v : iterable) {
+            if (!v.isDeleted())
+                vehicleList.add(v);
+        }
+
         return vehicleList;
     }
 
-    public Optional<VehicleEntity> getVehicleById(AccountEntity requester, int vehicleId)
-            throws InsufficientPrivilegesException {
-        Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(vehicleId);
-
-        if (!existingVehicle.isPresent()) {
-            existingVehicle = Optional.ofNullable(null);
-        }
-
-        if (!requester.equals(existingVehicle.get().getOwner()) && requester.getRole() != Role.ADMIN) {
+    public VehicleEntity getVehicleById(String authorization, int vehicleId) throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        VehicleEntity vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new VehicleNotFoundException());
+        // Check permissions
+        if (!requester.equals(vehicle.getOwner()) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
 
-        return existingVehicle;
+        return vehicle;
     }
 
-    public Optional<VehicleEntity> updateVehicle(AccountEntity requester, VehicleEntity updatedvehicle)
-            throws InsufficientPrivilegesException {
-        Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(updatedvehicle.getId());
-
-        if (!existingVehicle.isPresent()) {
-            existingVehicle = Optional.ofNullable(null);
-        }
-
-        if (!requester.equals(updatedvehicle.getOwner()) && requester.getRole() != Role.ADMIN) {
+    public VehicleEntity updateVehicle(String authorization, UpdateVehicleRequest request, int vehicleId)
+            throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        VehicleEntity vehicle = getVehicleById(authorization, vehicleId);
+        // Check request fields and update existing entity
+        if (!requester.equals(vehicle.getOwner()) && !isAccountAdmin(requester)) {
             throw new InsufficientPrivilegesException();
         }
-
-        existingVehicle = Optional.of(vehicleRepository.save(updatedvehicle));
-
-        return existingVehicle;
-    }
-
-    public boolean deleteVehicle(int vehicleId) {
-        Optional<VehicleEntity> existingVehicle = vehicleRepository.findById(vehicleId);
-
-        if (existingVehicle.isPresent()) {
-            vehicleRepository.delete(existingVehicle.get());
-            return true;
+        if (request.getColor() != null) {
+            vehicle.setColor(request.getColor());
+        }
+        if (request.getPlateNumber() != null) {
+            vehicle.setPlateNumber(request.getPlateNumber());
+        }
+        if (request.isDeleted() != vehicle.isDeleted()) {
+            vehicle.setDeleted(request.isDeleted());
         }
 
-        return false;
+        return vehicleRepository.save(vehicle);
+    }
+
+    public void deleteVehicle(String authorization, int vehicleId) throws Exception {
+        // Retrieve entities
+        AccountEntity requester = accountService.getAccountFromToken(authorization);
+        VehicleEntity vehicle = getVehicleById(authorization, vehicleId);
+        // Check permissions
+        if (!requester.equals(vehicle.getOwner()) && !isAccountAdmin(requester)) {
+            throw new InsufficientPrivilegesException();
+        }
+        // Set deleted
+        vehicle.setDeleted(true);
+        vehicleRepository.save(vehicle);
     }
 }
