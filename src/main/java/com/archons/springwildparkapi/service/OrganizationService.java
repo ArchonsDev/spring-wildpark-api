@@ -36,24 +36,29 @@ public class OrganizationService extends BaseService {
         // Fetch requester account
         AccountEntity requester = accountService.getAccountFromToken(authorization);
         // Check uniqueness
-        OrganizationEntity newOrganization = request.getNewOrganization();
         Optional<OrganizationEntity> existingOrganization = organizationRepository
-                .findByName(newOrganization.getName());
+                .findByName(request.getName());
         if (existingOrganization.isPresent() && !existingOrganization.get().getDeleted()) {
             throw new DuplicateEntityException();
         }
         // Validate fields
-        if (newOrganization.getName() == null ||
-                newOrganization.getLatitude() == 0 ||
-                newOrganization.getLongitude() == 0 ||
-                newOrganization.getPaymentStrategy() == null ||
-                newOrganization.getType() == null) {
+        if (request.getName() == null ||
+                request.getLatitude() == 0 ||
+                request.getLongitude() == 0 ||
+                request.getPaymentStrategy() == null ||
+                request.getType() == null) {
             throw new IncompleteRequestException();
         }
-        // Set requester as owner
-        newOrganization.setOwner(requester);
+        // Build entity
+        OrganizationEntity organization = new OrganizationEntity();
+        organization.setName(request.getName());
+        organization.setLatitude(request.getLatitude());
+        organization.setLongitude(request.getLongitude());
+        organization.setPaymentStrategy(request.getPaymentStrategy());
+        organization.setType(request.getType());
+        organization.setOwner(requester);
 
-        return organizationRepository.save(newOrganization);
+        return organizationRepository.save(organization);
     }
 
     public List<OrganizationEntity> getAllOrganizations() {
