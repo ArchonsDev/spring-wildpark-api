@@ -188,7 +188,14 @@ public class AccountService extends BaseService {
             throw new InsufficientPrivilegesException();
         }
 
-        return account.getVehicles();
+        List<VehicleEntity> vehicles = new ArrayList<>();
+        for (VehicleEntity v : account.getVehicles()) {
+            if (!v.isDeleted()) {
+                vehicles.add(v);
+            }
+        }
+
+        return vehicles;
     }
 
     public AccountOrganizationsResponse getAccountOrganizations(String authorization, int accountId) throws Exception {
