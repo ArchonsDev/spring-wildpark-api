@@ -19,6 +19,7 @@ import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
 import com.archons.springwildparkapi.exceptions.InsufficientPrivilegesException;
 import com.archons.springwildparkapi.model.AccountEntity;
 import com.archons.springwildparkapi.model.BookingEntity;
+import com.archons.springwildparkapi.model.OrganizationEntity;
 import com.archons.springwildparkapi.model.PaymentEntity;
 import com.archons.springwildparkapi.model.Role;
 import com.archons.springwildparkapi.model.VehicleEntity;
@@ -208,9 +209,28 @@ public class AccountService extends BaseService {
         }
         // Build response
         AccountOrganizationsResponse response = new AccountOrganizationsResponse();
-        response.setOwnedOrganizations(account.getOwnedOrganizations());
-        response.setAdminOrganizations(account.getAdminOrganizations());
-        response.setMemberOrganizations(account.getMemberOrganizations());
+        List<OrganizationEntity> ownedOrgs = new ArrayList<>();
+        for (OrganizationEntity o : account.getOwnedOrganizations()) {
+            if (!o.getDeleted()) {
+                ownedOrgs.add(o);
+            }
+        }
+        List<OrganizationEntity> adminOrgs = new ArrayList<>();
+        for (OrganizationEntity o : account.getAdminOrganizations()) {
+            if (!o.getDeleted()) {
+                adminOrgs.add(o);
+            }
+        }
+        List<OrganizationEntity> memberOrgs = new ArrayList<>();
+        for (OrganizationEntity o : account.getMemberOrganizations()) {
+            if (!o.getDeleted()) {
+                memberOrgs.add(o);
+            }
+        }
+
+        response.setOwnedOrganizations(ownedOrgs);
+        response.setAdminOrganizations(memberOrgs);
+        response.setMemberOrganizations(adminOrgs);
 
         return response;
     }
