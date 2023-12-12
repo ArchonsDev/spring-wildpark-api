@@ -229,8 +229,8 @@ public class AccountService extends BaseService {
         }
 
         response.setOwnedOrganizations(ownedOrgs);
-        response.setAdminOrganizations(memberOrgs);
-        response.setMemberOrganizations(adminOrgs);
+        response.setAdminOrganizations(adminOrgs);
+        response.setMemberOrganizations(memberOrgs);
 
         return response;
     }
