@@ -24,7 +24,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tblaccount")
 @JsonIgnoreProperties({ "ownedOrganizations", "adminOrganizations", "memberOrganizations", "vehicles", "bookings",
-        "payments", "role", "enabled", "authorities", "username", "accountNonLocked", "accountNonExpired",
+        "payments", "enabled", "authorities", "username", "accountNonLocked", "accountNonExpired",
         "credentialsNonExpired", "admin" })
 public class AccountEntity implements UserDetails {
     @Id
