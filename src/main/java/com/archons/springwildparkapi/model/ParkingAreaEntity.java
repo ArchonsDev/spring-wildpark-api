@@ -1,5 +1,6 @@
 package com.archons.springwildparkapi.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,6 +29,9 @@ public class ParkingAreaEntity {
     @OneToMany(mappedBy = "parkingArea")
     private List<VehicleEntity> parkedVehicles;
 
+    @OneToMany(mappedBy = "area")
+    private List<BookingEntity> bookings;
+
     @ManyToOne
     @JoinColumn(name = "organization_id")
     @JsonIgnore
@@ -39,11 +43,13 @@ public class ParkingAreaEntity {
     public ParkingAreaEntity() {
     }
 
-    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles, OrganizationEntity organization,
+    public ParkingAreaEntity(int id, int slots, List<VehicleEntity> parkedVehicles, List<BookingEntity> bookings,
+            OrganizationEntity organization,
             boolean deleted) {
         this.id = id;
         this.slots = slots;
         this.parkedVehicles = parkedVehicles;
+        this.bookings = bookings;
         this.organization = organization;
         this.deleted = deleted;
     }
@@ -70,6 +76,20 @@ public class ParkingAreaEntity {
 
     public void setParkedVehicles(List<VehicleEntity> parkedVehicles) {
         this.parkedVehicles = parkedVehicles;
+    }
+
+    public List<BookingEntity> getBookings() {
+        List<BookingEntity> bookingList = new ArrayList<>();
+        for (BookingEntity b : bookings) {
+            if (!b.isDeleted()) {
+                bookingList.add(b);
+            }
+        }
+        return bookingList;
+    }
+
+    public void setBookings(List<BookingEntity> bookings) {
+        this.bookings = bookings;
     }
 
     public OrganizationEntity getOrganization() {
@@ -100,6 +120,7 @@ public class ParkingAreaEntity {
         result = prime * result + id;
         result = prime * result + slots;
         result = prime * result + ((parkedVehicles == null) ? 0 : parkedVehicles.hashCode());
+        result = prime * result + ((bookings == null) ? 0 : bookings.hashCode());
         result = prime * result + ((organization == null) ? 0 : organization.hashCode());
         result = prime * result + (deleted ? 1231 : 1237);
         return result;
@@ -122,6 +143,11 @@ public class ParkingAreaEntity {
             if (other.parkedVehicles != null)
                 return false;
         } else if (!parkedVehicles.equals(other.parkedVehicles))
+            return false;
+        if (bookings == null) {
+            if (other.bookings != null)
+                return false;
+        } else if (!bookings.equals(other.bookings))
             return false;
         if (organization == null) {
             if (other.organization != null)

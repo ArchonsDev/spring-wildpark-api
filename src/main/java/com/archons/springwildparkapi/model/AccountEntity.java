@@ -1,6 +1,7 @@
 package com.archons.springwildparkapi.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -269,7 +270,14 @@ public class AccountEntity implements UserDetails {
     }
 
     public List<BookingEntity> getBookings() {
-        return bookings;
+        List<BookingEntity> bookingList = new ArrayList<>();
+
+        for (BookingEntity b : bookings) {
+            if (!b.isDeleted()) {
+                bookingList.add(b);
+            }
+        }
+        return bookingList;
     }
 
     public void setBookings(List<BookingEntity> bookings) {

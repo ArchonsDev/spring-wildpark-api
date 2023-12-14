@@ -37,10 +37,9 @@ public class BookingEntity {
 
     @OneToOne
     @JoinColumn(name = "organization_id")
-    @JsonIgnore
     private OrganizationEntity organization;
 
-    @OneToOne
+    @ManyToOne
     @JsonIgnore
     @JoinColumn(name = "parking_area_id")
     private ParkingAreaEntity area;
@@ -163,11 +162,6 @@ public class BookingEntity {
     @JsonProperty("vehicle")
     public String getVehiclePlateNumber() {
         return vehicle != null ? vehicle.getPlateNumber() : "Unknown";
-    }
-
-    @JsonProperty("organization")
-    public String getOrganizationName() {
-        return organization != null ? organization.getName() : "Unknown";
     }
 
     @JsonProperty("parkingArea")

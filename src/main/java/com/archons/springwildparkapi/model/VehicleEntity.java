@@ -40,6 +40,7 @@ public abstract class VehicleEntity {
     private AccountEntity owner;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "parking_area_id")
     private ParkingAreaEntity parkingArea;
 
@@ -128,6 +129,11 @@ public abstract class VehicleEntity {
     @JsonProperty("ownerId")
     public int getOwnerId() {
         return owner != null ? owner.getId() : 0;
+    }
+
+    @JsonProperty("parkingAreaId")
+    public int getParkingAreaid() {
+        return parkingArea.getId();
     }
 
     @Override
