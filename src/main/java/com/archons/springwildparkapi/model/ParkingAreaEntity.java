@@ -79,6 +79,10 @@ public class ParkingAreaEntity {
     }
 
     public List<BookingEntity> getBookings() {
+        if (bookings == null) {
+            return null;
+        }
+
         List<BookingEntity> bookingList = new ArrayList<>();
         for (BookingEntity b : bookings) {
             if (!b.isDeleted()) {
