@@ -16,6 +16,7 @@ import com.archons.springwildparkapi.exceptions.OrganizationNotFoundException;
 import com.archons.springwildparkapi.exceptions.ParkingAreaNotFoundException;
 import com.archons.springwildparkapi.exceptions.PaymentNotFoundException;
 import com.archons.springwildparkapi.exceptions.UnknownParkingAreaException;
+import com.archons.springwildparkapi.exceptions.VehicleAlreadyExistsException;
 import com.archons.springwildparkapi.exceptions.VehicleNotFoundException;
 
 @RestControllerAdvice
@@ -86,4 +87,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Max capacity reached");
     }
 
+    @ExceptionHandler(VehicleAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<String> handleVehicleAlreadyExistsException(VehicleAlreadyExistsException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Vehicle already exists");
+    }
 }
