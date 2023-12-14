@@ -119,7 +119,7 @@ public class ParkingAreaService extends BaseService {
         List<ParkingAreaEntity> orgParking = new ArrayList<>();
 
         for (ParkingAreaEntity p : iterable) {
-            if (organization.equals(p.getOrganization())) {
+            if (organization.equals(p.getOrganization()) && !p.isDeleted()) {
                 orgParking.add(p);
             }
         }
