@@ -133,7 +133,7 @@ public abstract class VehicleEntity {
 
     @JsonProperty("parkingAreaId")
     public int getParkingAreaid() {
-        return parkingArea.getId();
+        return parkingArea != null ? parkingArea.getId() : 0;
     }
 
     @Override
