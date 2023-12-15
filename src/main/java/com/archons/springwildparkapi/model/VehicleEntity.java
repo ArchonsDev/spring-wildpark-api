@@ -133,6 +133,9 @@ public abstract class VehicleEntity {
 
     @JsonProperty("parkingAreaId")
     public int getParkingAreaid() {
+        if (parkingArea == null)
+            return 0;
+
         return parkingArea.getId();
     }
 
