@@ -244,7 +244,14 @@ public class AccountService extends BaseService {
             throw new InsufficientPrivilegesException();
         }
 
-        return account.getBookings();
+        List<BookingEntity> bookingList = new ArrayList<>();
+        for (BookingEntity b : account.getBookings()) {
+            if (!b.isDeleted()) {
+                bookingList.add(b);
+            }
+        }
+
+        return bookingList;
     }
 
     public List<PaymentEntity> getAccountPayments(String authorization, int accountId) throws Exception {
