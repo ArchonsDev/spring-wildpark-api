@@ -42,7 +42,12 @@ public class PaymentService extends BaseService {
         // Build payment list
         Iterable<PaymentEntity> iterable = paymentRepository.findAll();
         List<PaymentEntity> paymentList = new ArrayList<>();
-        iterable.forEach(paymentList::add);
+
+        for (PaymentEntity p : iterable) {
+            if (!p.isDeleted()) {
+                paymentList.add(p);
+            }
+        }
 
         return paymentList;
     }
@@ -121,7 +126,7 @@ public class PaymentService extends BaseService {
         newPayment.setDate(parseDateTime(request.getDate()));
         newPayment.setPayor(payor);
         // Update booking
-        bookingService.makePayment(booking);
+        bookingService.makePayment(booking, newPayment);
 
         return paymentRepository.save(newPayment);
     }
