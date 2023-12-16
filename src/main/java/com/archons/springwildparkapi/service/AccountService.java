@@ -279,7 +279,7 @@ public class AccountService extends BaseService {
 
         AccountEntity requester = existingRequester.get();
         String newPassword = generatePassword();
-        requester.setPassword(newPassword);
+        requester.setPassword(encodePassword(newPassword));
         accountRepository.save(requester);
 
         String emailBody = """
