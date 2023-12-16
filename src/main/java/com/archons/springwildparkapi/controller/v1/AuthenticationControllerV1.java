@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.archons.springwildparkapi.dto.reesponses.AuthenticationResponse;
 import com.archons.springwildparkapi.dto.requests.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.requests.RegisterAccountRequest;
+import com.archons.springwildparkapi.dto.requests.ResetPasswordRequest;
 import com.archons.springwildparkapi.service.AccountService;
 
 @RestController
@@ -30,5 +31,11 @@ public class AuthenticationControllerV1 {
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request)
             throws Exception {
         return ResponseEntity.ok(accountService.authenticate(request));
+    }
+
+    @PostMapping("/resetpassword")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordRequest request) {
+        accountService.resetPassword(request);
+        return ResponseEntity.ok().build();
     }
 }
