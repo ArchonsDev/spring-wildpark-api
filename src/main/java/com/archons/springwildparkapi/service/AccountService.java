@@ -1,5 +1,6 @@
 package com.archons.springwildparkapi.service;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,6 +14,7 @@ import com.archons.springwildparkapi.dto.reesponses.AccountOrganizationsResponse
 import com.archons.springwildparkapi.dto.reesponses.AuthenticationResponse;
 import com.archons.springwildparkapi.dto.requests.AuthenticationRequest;
 import com.archons.springwildparkapi.dto.requests.RegisterAccountRequest;
+import com.archons.springwildparkapi.dto.requests.ResetPasswordRequest;
 import com.archons.springwildparkapi.dto.requests.UpdateAccountRequest;
 import com.archons.springwildparkapi.exceptions.AccountNotFoundException;
 import com.archons.springwildparkapi.exceptions.DuplicateEntityException;
@@ -30,13 +32,15 @@ public class AccountService extends BaseService {
     private final AccountRepository accountRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final EmailService emailService;
 
     public AccountService(PasswordEncoder passwordEncoder, AccountRepository accountRepository,
-            AuthenticationManager authenticationManager, JwtService jwtService) {
+            AuthenticationManager authenticationManager, JwtService jwtService, EmailService emailService) {
         super(passwordEncoder);
         this.accountRepository = accountRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
     public AccountEntity getAccountFromToken(String authorization) throws Exception {
@@ -264,5 +268,74 @@ public class AccountService extends BaseService {
         }
 
         return account.getPayments();
+    }
+
+    public void resetPassword(ResetPasswordRequest request) {
+        Optional<AccountEntity> existingRequester = accountRepository.findByEmail(request.getEmail());
+
+        if (!existingRequester.isPresent()) {
+            return;
+        }
+
+        AccountEntity requester = existingRequester.get();
+        String newPassword = generatePassword();
+        requester.setPassword(newPassword);
+        accountRepository.save(requester);
+
+        String emailBody = """
+                Dear %s %s,
+
+                Your password has been successfully reset. Please use the following temporary password to log in:
+
+                New Password: %s
+
+                For security reasons, we recommend changing your password after logging in.
+
+                Best regards,
+                WildPark Team
+                """;
+
+        emailBody = String.format(emailBody, requester.getFirstname(), requester.getLastname(), newPassword);
+
+        emailService.sendEmail(request.getEmail(), "Password Reset", emailBody);
+    }
+
+    public String generatePassword() {
+        String capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String smallLetters = "abcdefghijklmnopqrstuvwxyz";
+        String numbers = "0123456789";
+        String specialCharacters = "!@#$%^&*()-_+=<>?";
+
+        String allCharacters = capitalLetters + smallLetters + numbers + specialCharacters;
+
+        SecureRandom random = new SecureRandom();
+
+        StringBuilder password = new StringBuilder();
+
+        // Ensure at least one character from each category
+        password.append(getRandomCharacter(capitalLetters, random));
+        password.append(getRandomCharacter(numbers, random));
+        password.append(getRandomCharacter(specialCharacters, random));
+
+        // Generate the remaining characters
+        for (int i = 0; i < 5; i++) {
+            password.append(getRandomCharacter(allCharacters, random));
+        }
+
+        // Shuffle the characters to ensure randomness
+        char[] passwordArray = password.toString().toCharArray();
+        for (int i = passwordArray.length - 1; i > 0; i--) {
+            int index = random.nextInt(i + 1);
+            char temp = passwordArray[index];
+            passwordArray[index] = passwordArray[i];
+            passwordArray[i] = temp;
+        }
+
+        return new String(passwordArray);
+    }
+
+    private char getRandomCharacter(String characterSet, SecureRandom random) {
+        int randomIndex = random.nextInt(characterSet.length());
+        return characterSet.charAt(randomIndex);
     }
 }
