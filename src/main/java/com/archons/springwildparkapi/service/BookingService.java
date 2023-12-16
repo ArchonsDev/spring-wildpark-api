@@ -145,11 +145,12 @@ public class BookingService extends BaseService {
         bookingRepository.save(booking);
     }
 
-    public void makePayment(BookingEntity booking) throws Exception {
+    public void makePayment(BookingEntity booking, PaymentEntity payment) throws Exception {
         if (booking == null) {
             throw new BookingNotFoundException();
         }
         // Update booking status
+        booking.setPayment(payment);
         booking.setStatus(BookingStatus.CONFIRMED);
         bookingRepository.save(booking);
     }
